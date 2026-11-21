@@ -1,0 +1,4552 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>
+      FarmConnect: proof of condition, fair price, trusted transport
+    </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1a1410;
+        --surface: #2a211b;
+        --ink: #f4ece3;
+        --mute: #b8a899;
+        --line: #44372d;
+        --accent: #f0b53a;
+        --accent2: #ffd978;
+        --ai: #2a1c00;
+        --blue: #8fa8ff;
+        --ok: #7fd69a;
+        --bad: #ff8a80;
+        color-scheme: dark;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      :root[data-theme="dark"] {
+        --bg: #1a1410;
+        --surface: #2a211b;
+        --ink: #f4ece3;
+        --mute: #b8a899;
+        --line: #44372d;
+        --accent: #f0b53a;
+        --accent2: #ffd978;
+        --ai: #2a1c00;
+        --blue: #8fa8ff;
+        --ok: #7fd69a;
+        --bad: #ff8a80;
+        color-scheme: dark;
+      }
+      :root[data-theme="light"] {
+        --bg: #f6f0e6;
+        --surface: #fffaf2;
+        --ink: #2a1f16;
+        --mute: #6b5b4c;
+        --line: #dccfbd;
+        --accent: #b36b00;
+        --accent2: #d98a00;
+        --ai: #ffffff;
+        --blue: #2f4fcf;
+        --ok: #1f7a43;
+        --bad: #c0362c;
+        color-scheme: light;
+      }
+      :root[data-theme="dark"][data-accent="green"] {
+        --accent: #6fcf8b;
+        --accent2: #a6e8b8;
+      }
+      :root[data-theme="dark"][data-accent="coral"] {
+        --accent: #ff8a65;
+        --accent2: #ffb199;
+      }
+      :root[data-theme="dark"][data-accent="sky"] {
+        --accent: #7fb2ff;
+        --accent2: #b3d0ff;
+      }
+      :root[data-theme="light"][data-accent="green"] {
+        --accent: #1f7a43;
+        --accent2: #2f9a5a;
+      }
+      :root[data-theme="light"][data-accent="coral"] {
+        --accent: #c4472a;
+        --accent2: #e0623f;
+      }
+      :root[data-theme="light"][data-accent="sky"] {
+        --accent: #2158c9;
+        --accent2: #3d78e8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          400 16px/1.55 "DM Sans",
+          system-ui,
+          sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Bricolage Grotesque", "DM Sans", sans-serif;
+        line-height: 1.1;
+        margin: 0;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .wrap {
+        max-width: none;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 clamp(16px, 4vw, 56px);
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .logo {
+        font:
+          800 clamp(1.9rem, 4vw, 2.6rem)/1 "Bricolage Grotesque",
+          sans-serif;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+      }
+      .logo .mk {
+        display: inline-grid;
+        place-items: center;
+        width: 1.3em;
+        height: 1.3em;
+        margin-right: 12px;
+        border-radius: 14px;
+        background: var(--accent);
+        font-size: 0.8em;
+        transform: rotate(-6deg);
+        box-shadow: 0 4px 14px rgba(240, 181, 58, 0.35);
+      }
+      .logo .cn {
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      nav {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      nav button {
+        background: none;
+        border: 0;
+        padding: 8px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--mute);
+      }
+      nav button[aria-current="true"] {
+        background: var(--ink);
+        color: var(--bg);
+      }
+      .hero {
+        padding: 40px 0 20px;
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 5.5vw, 3.5rem);
+        font-weight: 800;
+        max-width: 18ch;
+      }
+      .hero p {
+        max-width: 58ch;
+        color: var(--mute);
+        font-size: 1.08rem;
+        margin: 14px 0 0;
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 12px;
+        margin-top: 22px;
+      }
+      .fact {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .fact b {
+        font:
+          800 1.9rem "Bricolage Grotesque",
+          sans-serif;
+        color: var(--accent);
+        display: block;
+      }
+      .src {
+        color: var(--mute);
+        font-size: 0.82rem;
+        margin-top: 8px;
+      }
+      section.view {
+        display: none;
+        padding: 18px 0 60px;
+      }
+      section.view.on {
+        display: block;
+      }
+      h2 {
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+      }
+      .sub {
+        color: var(--mute);
+        margin: 0 0 18px;
+        max-width: 62ch;
+      }
+      .tools {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .tools input,
+      .tools select,
+      .f input,
+      .f select {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-width: 0;
+      }
+      .tools input {
+        flex: 1 1 200px;
+      }
+      .crops {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .crops button {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 999px;
+        padding: 6px 14px;
+        cursor: pointer;
+      }
+      .crops button[aria-pressed="true"] {
+        background: var(--accent);
+        color: var(--ai);
+        border-color: var(--accent);
+        font-weight: 700;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+        gap: 16px;
+      }
+      .card,
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+      }
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .card h3 {
+        font-size: 1.25rem;
+      }
+      .price {
+        font:
+          700 1.3rem "Bricolage Grotesque",
+          sans-serif;
+      }
+      .price small {
+        font: 400 0.85rem "DM Sans";
+        color: var(--mute);
+      }
+      .meta {
+        color: var(--mute);
+        font-size: 0.92rem;
+      }
+      .ver {
+        color: var(--ok);
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .meter {
+        margin: 4px 0;
+      }
+      .mt {
+        height: 8px;
+        border-radius: 6px;
+        background: linear-gradient(
+          90deg,
+          var(--bad),
+          var(--accent),
+          var(--ok)
+        );
+        position: relative;
+      }
+      .mt i {
+        position: absolute;
+        top: -4px;
+        width: 6px;
+        height: 16px;
+        border-radius: 3px;
+        background: var(--ink);
+        transform: translateX(-3px);
+      }
+      .ml {
+        font-size: 0.85rem;
+        margin-top: 6px;
+        font-weight: 500;
+      }
+      .btn {
+        background: var(--ink);
+        color: var(--bg);
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .btn.alt {
+        background: var(--accent);
+        color: var(--ai);
+      }
+      .btn.ghost {
+        background: none;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+      .card .btn {
+        margin-top: auto;
+      }
+      .scroll {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 560px;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid var(--line);
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      td.cell {
+        cursor: pointer;
+        font-weight: 500;
+      }
+      td.cell[aria-selected="true"] {
+        outline: 3px solid var(--ink);
+        outline-offset: -3px;
+      }
+      .unit {
+        display: block;
+        color: var(--mute);
+        font-size: 0.78rem;
+        font-weight: 400;
+      }
+      .bars {
+        display: grid;
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .brow {
+        display: grid;
+        grid-template-columns: 80px 1fr 100px;
+        gap: 10px;
+        align-items: center;
+        font-size: 0.95rem;
+      }
+      .track {
+        background: var(--bg);
+        border-radius: 8px;
+        height: 26px;
+        overflow: hidden;
+      }
+      .fill {
+        height: 100%;
+        border-radius: 8px;
+        transition: width 0.4s;
+      }
+      .lead {
+        font:
+          700 1.1rem "Bricolage Grotesque",
+          sans-serif;
+      }
+      .f {
+        display: grid;
+        gap: 14px;
+        max-width: 460px;
+      }
+      .f label {
+        display: grid;
+        gap: 4px;
+        font-weight: 500;
+      }
+      .msg {
+        font-weight: 700;
+        min-height: 1.5em;
+        color: var(--ok);
+      }
+      .steps {
+        display: flex;
+        gap: 6px;
+        margin: 10px 0;
+        flex-wrap: wrap;
+      }
+      .step {
+        flex: 1 1 90px;
+        padding: 7px;
+        border-radius: 8px;
+        background: var(--bg);
+        color: var(--mute);
+        font-size: 0.84rem;
+        text-align: center;
+      }
+      .step.done {
+        background: var(--ok);
+        color: var(--surface);
+        font-weight: 700;
+      }
+      .ord {
+        border-top: 1px solid var(--line);
+        padding: 16px 0;
+      }
+      .ord:first-child {
+        border-top: 0;
+      }
+      .chk {
+        background: var(--bg);
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 8px;
+      }
+      .chk input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      .res {
+        border-left: 4px solid var(--ok);
+        padding: 10px 14px;
+        background: var(--bg);
+        border-radius: 0 10px 10px 0;
+        margin-top: 8px;
+      }
+      .res.bad {
+        border-color: var(--bad);
+      }
+      .tr {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .tr:first-child {
+        border-top: 0;
+      }
+      .rank {
+        font:
+          800 1.5rem "Bricolage Grotesque",
+          sans-serif;
+        color: var(--accent);
+        width: 2ch;
+      }
+      .pill {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--ai);
+      }
+      dialog {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+        color: var(--ink);
+        padding: 22px;
+        width: min(440px, 92vw);
+      }
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      dialog select,
+      dialog input {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+      }
+      .sum {
+        display: grid;
+        gap: 4px;
+        margin: 12px 0;
+        font-size: 0.95rem;
+      }
+      .sum div {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .sum .tot {
+        font-weight: 700;
+        border-top: 1px solid var(--line);
+        padding-top: 6px;
+      }
+      .empty {
+        color: var(--mute);
+        padding: 24px;
+        border: 1px dashed var(--line);
+        border-radius: 14px;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 20px 0 32px;
+        color: var(--mute);
+        font-size: 0.88rem;
+      }
+      .tag {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .star {
+        background: none;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 12px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .star[aria-pressed="true"] {
+        background: var(--accent);
+        color: var(--ai);
+        border-color: var(--accent);
+      }
+      .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font:
+          700 0.85rem "DM Sans",
+          sans-serif;
+        vertical-align: middle;
+        margin-left: 8px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--ok);
+        animation: pl 1.4s infinite;
+      }
+      @keyframes pl {
+        50% {
+          opacity: 0.25;
+        }
+      }
+      .paused .dot {
+        background: var(--mute);
+        animation: none;
+      }
+      .ev {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: start;
+      }
+      .ev:first-child {
+        border-top: 0;
+      }
+      .rt {
+        font-size: 0.78rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: 2px 10px;
+      }
+      .mapbox {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 8px;
+      }
+      svg.map {
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+      svg.map.drag {
+        cursor: grabbing;
+      }
+      .mapwrap {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .mapwrap .mapbox {
+        height: clamp(520px, 82vh, 920px);
+        padding: 0;
+        overflow: hidden;
+      }
+      .mapwrap.full {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        background: var(--bg);
+        padding: 12px;
+      }
+      .mapwrap.full .mapbox {
+        flex: 1;
+        height: auto;
+      }
+      .mctl {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+      }
+      .mctl .btn {
+        padding: 6px 12px;
+      }
+      .mctl label {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      .mctl input[type="time"] {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 4px 8px;
+      }
+      .legs {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0 14px;
+        font-size: 0.92rem;
+      }
+      .legs td,
+      .legs th {
+        text-align: left;
+        padding: 5px 10px 5px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .legs th {
+        color: var(--mute);
+        font-weight: 500;
+      }
+      a.btn {
+        display: inline-block;
+        text-decoration: none;
+      }
+      .url {
+        width: 100%;
+        margin-top: 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+      }
+      .cbar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .cbar[hidden] {
+        display: none;
+      }
+      .stk {
+        font-size: 0.85rem;
+        color: var(--mute);
+        margin-top: 4px;
+      }
+      .stk.on {
+        color: var(--ok);
+        font-weight: 700;
+      }
+      .dots i {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--line);
+        margin-right: 4px;
+      }
+      .dots i.on {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .bub {
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 82%;
+        margin: 8px 0;
+        background: var(--bg);
+        border: 1px solid var(--line);
+      }
+      .bub.me {
+        margin-left: auto;
+        background: var(--accent);
+        color: var(--ai);
+        border-color: var(--accent);
+      }
+      .bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 250px;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        gap: 18px;
+        padding: calc(18px + env(safe-area-inset-top, 0px)) 14px
+          calc(18px + env(safe-area-inset-bottom, 0px));
+        background: var(--surface);
+        border-bottom: 0;
+        border-right: 1px solid var(--line);
+        overflow-y: auto;
+        z-index: 30;
+      }
+      .wrap {
+        padding-left: calc(250px + clamp(20px, 3vw, 48px));
+      }
+      .logo {
+        font-size: 1.7rem;
+        flex-wrap: wrap;
+        row-gap: 10px;
+      }
+      nav {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 2px;
+      }
+      nav button {
+        text-align: left;
+        border-radius: 10px;
+        padding: 10px 14px;
+        width: 100%;
+      }
+      #mbtn {
+        display: none;
+      }
+      @media (max-width: 900px) {
+        .bar {
+          position: sticky;
+          top: 0;
+          width: auto;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: space-between;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 10px 0;
+          overflow: visible;
+          gap: 10px;
+        }
+        .wrap {
+          padding-left: clamp(16px, 4vw, 56px);
+        }
+        .logo {
+          font-size: 1.5rem;
+        }
+        #mbtn {
+          display: inline-block;
+        }
+        nav {
+          display: none;
+          width: 100%;
+        }
+        nav.open {
+          display: flex;
+        }
+      }
+      /* Sidebar open/close (desktop) */
+      .bar {
+        transition:
+          transform 0.25s ease,
+          visibility 0s linear 0s;
+      }
+      .wrap {
+        transition: padding 0.25s ease;
+      }
+      #sbhide,
+      #sbshow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--ink);
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 7px 12px;
+      }
+      #sbhide {
+        align-self: flex-end;
+        background: none;
+        color: var(--mute);
+        margin-bottom: -6px;
+      }
+      #sbhide:hover,
+      #sbshow:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #sbtop {
+        position: fixed;
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        left: 14px;
+        z-index: 29;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 6px 14px 6px 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      #sbtop .logo {
+        font-size: 1.5rem;
+      }
+      #sbtop .logo .mk {
+        margin-right: 10px;
+        border-radius: 10px;
+      }
+      body.sb-closed .bar {
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition:
+          transform 0.25s ease,
+          visibility 0s linear 0.25s;
+      }
+      body.sb-closed .wrap {
+        padding-left: clamp(16px, 4vw, 56px);
+        padding-top: 68px;
+      }
+      body.sb-closed #sbtop {
+        visibility: visible;
+        opacity: 1;
+        transition-delay: 0.15s;
+      }
+      @media (max-width: 900px) {
+        #sbhide {
+          order: 3;
+          align-self: center;
+          margin: 0;
+          padding: 10px 14px;
+        }
+        #sbtop .logo {
+          font-size: 1.3rem;
+        }
+        #sbtop .logo .mk {
+          margin-right: 8px;
+        }
+        body.sb-closed .bar {
+          display: none;
+        }
+        body.sb-closed .wrap {
+          padding-top: 64px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+        .dot {
+          animation: none;
+        }
+      }
+      .fx {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 10px;
+        align-items: center;
+        font-size: 0.85rem;
+      }
+      .fr {
+        font-weight: 700;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        padding: 1px 10px;
+      }
+      .spark {
+        display: block;
+        width: 100%;
+        height: 38px;
+      }
+      .tnd {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 0.8rem;
+        color: var(--mute);
+      }
+      .hero.off {
+        display: none;
+      }
+      /* Settings */
+      .st {
+        border: 0;
+        padding: 0;
+        margin: 0 0 28px;
+        min-width: 0;
+      }
+      .st legend {
+        font:
+          700 1.15rem "Bricolage Grotesque",
+          sans-serif;
+        padding: 0;
+        margin-bottom: 4px;
+      }
+      .st .hint {
+        color: var(--mute);
+        margin: 0 0 12px;
+        max-width: 62ch;
+      }
+      .opts {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .opt {
+        position: relative;
+        display: grid;
+        gap: 2px;
+        width: 190px;
+        padding: 10px;
+        background: var(--surface);
+        border: 2px solid var(--line);
+        border-radius: 14px;
+        cursor: pointer;
+      }
+      .opt input {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
+        margin: 0;
+        cursor: pointer;
+      }
+      .opt:has(input:checked) {
+        border-color: var(--accent);
+      }
+      .opt:has(input:focus-visible) {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .opt b {
+        margin-top: 8px;
+      }
+      .opt small {
+        color: var(--mute);
+      }
+      .pv {
+        display: block;
+        height: 64px;
+        border-radius: 8px;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        background-repeat: no-repeat;
+      }
+      .pv-dark {
+        background:
+          linear-gradient(#2a211b, #2a211b) 10px 12px / 46% 10px no-repeat,
+          linear-gradient(#f0b53a, #f0b53a) 10px 34px / 30% 12px no-repeat,
+          #1a1410;
+      }
+      .pv-light {
+        background:
+          linear-gradient(#fffaf2, #fffaf2) 10px 12px / 46% 10px no-repeat,
+          linear-gradient(#b36b00, #b36b00) 10px 34px / 30% 12px no-repeat,
+          #f6f0e6;
+      }
+      .pv-system {
+        background:
+          linear-gradient(#f6f0e6, #f6f0e6) left / 50% 100% no-repeat,
+          #1a1410;
+      }
+      .opts.sw .opt {
+        width: auto;
+        grid-auto-flow: column;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px 8px 10px;
+        border-radius: 999px;
+      }
+      .opts.sw .opt b {
+        margin: 0;
+      }
+      .dotc {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 1px solid rgba(128, 128, 128, 0.4);
+      }
+      .dotc-gold {
+        background: #e8a317;
+      }
+      .dotc-green {
+        background: #3fa862;
+      }
+      .dotc-coral {
+        background: #e8643f;
+      }
+      .dotc-sky {
+        background: #4d86e8;
+      }
+    </style>
+    <meta name="theme-color" content="#1a1410" />
+    <script>
+      (function () {
+        try {
+          var t = JSON.parse(localStorage.getItem("fc_theme") || "{}"),
+            m = t.mode === "light" || t.mode === "system" ? t.mode : "dark",
+            r = document.documentElement;
+          if (m === "system")
+            m = matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark";
+          r.setAttribute("data-theme", m);
+          if (/^(green|coral|sky)$/.test(t.accent))
+            r.setAttribute("data-accent", t.accent);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="sbtop">
+      <button
+        id="sbshow"
+        type="button"
+        aria-controls="sidebar"
+        aria-expanded="false"
+        aria-label="Open sidebar"
+      >
+        &#9776; Menu
+      </button>
+      <div class="logo">
+        <span class="mk" aria-hidden="true">🌽</span>Farm<span class="cn"
+          >Connect</span
+        >
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="bar" id="sidebar">
+        <button
+          id="sbhide"
+          type="button"
+          aria-controls="sidebar"
+          aria-expanded="true"
+          aria-label="Close sidebar"
+        >
+          &laquo; Hide
+        </button>
+        <div class="logo">
+          <span class="mk" aria-hidden="true">🌽</span>Farm<span class="cn"
+            >Connect</span
+          >
+          <button
+            class="btn ghost"
+            id="fs"
+            style="
+              padding: 4px 12px;
+              font:
+                700 0.8rem &quot;DM Sans&quot;,
+                sans-serif;
+              letter-spacing: 0;
+              margin-left: 14px;
+            "
+          >
+            Full screen
+          </button>
+        </div>
+        <button
+          class="btn ghost"
+          id="mbtn"
+          aria-expanded="false"
+          aria-controls="nav"
+        >
+          Menu
+        </button>
+        <nav id="nav" aria-label="Sections">
+          <button data-v="market">Marketplace</button
+          ><button data-v="deals">Offers<span id="dn"></span></button
+          ><button data-v="inbox">Farmer inbox<span id="ib"></span></button
+          ><button data-v="rewards">Rewards<span id="rn"></span></button
+          ><button data-v="live">Live feed</button
+          ><button data-v="map">Route map</button
+          ><button data-v="people">Profiles</button
+          ><button data-v="saved">Saved<span id="svn"></span></button
+          ><button data-v="orders">Deliveries</button
+          ><button data-v="carriers">Transporters</button
+          ><button data-v="prices">Price tracker</button
+          ><button data-v="sell">Sell a crop</button
+          ><button data-v="settings">Settings</button>
+        </nav>
+      </div>
+
+      <div class="hero">
+        <h1>
+          Sell at a fair price. Prove the condition. Pay for what arrives.
+        </h1>
+        <p>
+          Produce leaves the farm in good shape and arrives bruised, so farmers
+          get downgraded prices and buyers and farmers blame each other.
+          FarmConnect records condition at pickup and at delivery, rates
+          transporters on it, and shows every farmer if their price is fair.
+        </p>
+        <div class="facts">
+          <div class="fact">
+            <b>83%</b>of tomato farmers surveyed named damage during harvest or
+            handling as their main loss cause.
+          </div>
+          <div class="fact">
+            <b>34% vs 8%</b>of farmers in Kaduna and Oyo reported losses from
+            delayed sales, so market access is a northern problem.
+          </div>
+          <div class="fact">
+            <b>&lt;1%</b>of tomatoes were lost outright on farms in the same
+            sample. Most "loss" was downgraded produce.
+          </div>
+        </div>
+        <div class="src">
+          Figures from an MSU policy brief on tomato losses in Nigeria. Treat as
+          one study; validate with farmers you talk to.
+        </div>
+      </div>
+
+      <main>
+        <section class="view" id="market">
+          <h2>Marketplace</h2>
+          <p class="sub">
+            Every listing shows a fair price meter. Order and choose a
+            transporter by their handling record.
+          </p>
+          <div class="tools">
+            <input
+              id="q"
+              type="search"
+              placeholder="Search by crop or farmer"
+              aria-label="Search"
+            /><select id="st" aria-label="State"></select
+            ><select id="so" aria-label="Sort listings">
+              <option value="">Sort: default</option>
+              <option value="pl">Price: low to high</option>
+              <option value="ph">Price: high to low</option>
+              <option value="rt">Best rated farmer</option>
+              <option value="dm">Lowest typical damage</option>
+              <option value="fp">Best value vs market</option></select
+            ><select id="dlv" aria-label="Delivery estimate to">
+              <option value="">Deliver to: not set</option>
+            </select>
+          </div>
+          <div
+            class="crops"
+            id="crops"
+            role="group"
+            aria-label="Crop filter"
+          ></div>
+          <div class="panel cbar" id="cbar" hidden>
+            <b id="cct"></b><span class="meta" id="cnote"></span
+            ><span style="display: flex; gap: 8px"
+              ><button class="btn alt" id="cgo">Compare</button
+              ><button class="btn ghost" id="cclr">Clear</button></span
+            >
+          </div>
+          <div class="grid" id="list"></div>
+        </section>
+
+        <section class="view" id="inbox">
+          <h2>Farmer inbox</h2>
+          <p class="sub">
+            Answer offers as a farmer. Pick a farmer, then accept, counter or
+            decline each offer. Sample buyers have already sent some offers, and
+            they reply to your counters. To receive your own offers here, untick
+            "Farmers reply automatically" in the Offers tab.
+          </p>
+          <div class="tools">
+            <select id="isel" aria-label="Answer as farmer"></select>
+          </div>
+          <div class="panel" id="ilist"></div>
+        </section>
+        <section class="view" id="rewards">
+          <h2>Streak rewards</h2>
+          <p class="sub">
+            Buy from the same farmer 3 times and your next order from them gets
+            20% off the crops. An order counts once its delivery is confirmed,
+            and using the reward resets the streak. Amina Bello and Funke
+            Adebayo start with sample progress so you can try it quickly.
+          </p>
+          <div class="panel" id="rlist"></div>
+        </section>
+        <section class="view" id="deals">
+          <h2>Offers and negotiation</h2>
+          <p class="sub">
+            Make an offer on any listing. The farmer replies with a
+            counter-offer based on the asking price, and you can accept, counter
+            or walk away. The farmer’s replies are simulated for this demo. Once
+            you agree, order at the negotiated price.
+          </p>
+          <label
+            class="tag"
+            style="
+              display: inline-flex;
+              gap: 8px;
+              align-items: center;
+              margin-bottom: 14px;
+              cursor: pointer;
+            "
+            ><input type="checkbox" id="auto" checked /> Farmers reply
+            automatically (untick to answer offers yourself in the Farmer
+            inbox)</label
+          >
+          <div class="panel" id="nlist"></div>
+        </section>
+        <section class="view" id="live">
+          <h2>
+            Live updates<span class="live" id="lv"
+              ><i class="dot"></i>Live</span
+            >
+          </h2>
+          <p class="sub">
+            Updates from farmers, buyers and transporters as they happen.
+            Background updates are simulated for the demo. Your own orders,
+            pickups, deliveries and listings show up here too.
+          </p>
+          <div class="tools">
+            <div class="crops" id="fchips" style="margin: 0"></div>
+            <button class="btn ghost" id="fp">Pause</button>
+          </div>
+          <div class="panel" id="feedlist"></div>
+        </section>
+        <section class="view" id="map">
+          <h2>Route map</h2>
+          <p class="sub">
+            Pick a transporter and a buyer to see the road route between them,
+            then open the directions in Google Maps. The map is hand-drawn from
+            approximate coordinates, and distances and times are estimates.
+            Google Maps shows the real road route.
+          </p>
+          <div class="tools">
+            <select id="mt" aria-label="Transporter"></select
+            ><select id="mb" aria-label="Buyer"></select>
+          </div>
+          <div class="mapwrap" id="mapwrap">
+            <div class="mctl" role="toolbar" aria-label="Map controls">
+              <button
+                class="btn ghost"
+                id="mzi"
+                type="button"
+                aria-label="Zoom in"
+              >
+                +
+              </button>
+              <button
+                class="btn ghost"
+                id="mzo"
+                type="button"
+                aria-label="Zoom out"
+              >
+                &minus;
+              </button>
+              <button class="btn ghost" id="mfit" type="button">
+                Fit route
+              </button>
+              <button class="btn ghost" id="mrst" type="button">
+                Whole country
+              </button>
+              <button
+                class="btn ghost"
+                id="mfs"
+                type="button"
+                aria-pressed="false"
+              >
+                Expand map
+              </button>
+              <label
+                >Leave at <input type="time" id="mdep" value="06:00"
+              /></label>
+            </div>
+            <div class="mctl" id="mly">
+              <label
+                ><input type="checkbox" data-ly="roads" checked /> Roads</label
+              >
+              <label
+                ><input type="checkbox" data-ly="rivers" checked />
+                Rivers</label
+              >
+              <label
+                ><input type="checkbox" data-ly="labels" checked /> All city
+                names</label
+              >
+              <label
+                ><input type="checkbox" data-ly="people" checked /> Farmers,
+                buyers, transporters</label
+              >
+              <label
+                ><input type="checkbox" data-ly="alt" checked /> Alternate
+                route</label
+              >
+            </div>
+            <div class="mapbox" id="mapsvg"></div>
+            <div class="meta" id="mleg">
+              <span style="color: var(--ok)">&#9679;</span> Transporter &nbsp;
+              <span style="color: var(--blue)">&#9679;</span> Buyer &nbsp;
+              <span style="color: var(--accent)">&#9473;</span> Best route
+              &nbsp; <span style="color: var(--blue)">&#9548;</span> Alternate
+              &nbsp; Scroll or pinch to zoom, drag to move. Approximate
+              coordinates, not survey-accurate.
+            </div>
+          </div>
+          <div class="panel" id="mi" style="margin-top: 14px"></div>
+          <div class="panel" id="mn" style="margin-top: 14px"></div>
+        </section>
+        <section class="view" id="people">
+          <h2>Farmer and buyer profiles</h2>
+          <p class="sub">
+            Browse farmers and buyers. Tap Save on the ones you want to deal
+            with again, then find them under Saved.
+          </p>
+          <div class="tools">
+            <div class="crops" id="prole" style="margin: 0"></div>
+            <input
+              id="pq"
+              type="search"
+              placeholder="Search by name, crop or state"
+              aria-label="Search profiles"
+            />
+          </div>
+          <div class="grid" id="plist"></div>
+        </section>
+        <section class="view" id="saved">
+          <h2>Saved profiles</h2>
+          <p class="sub">Your bookmarks are kept in this browser.</p>
+          <div class="grid" id="slist"></div>
+        </section>
+        <section class="view" id="orders">
+          <h2>Deliveries</h2>
+          <p class="sub">
+            Walk an order through the condition checks. In the real app each
+            check captures a timestamped photo. Here you set the damage level
+            yourself to see how settlement works.
+          </p>
+          <div class="panel" id="ordlist"></div>
+        </section>
+
+        <section class="view" id="carriers">
+          <h2>Transporter handling ratings</h2>
+          <p class="sub">
+            Ranked by average damage added in transit. Complete a delivery and
+            watch the ranking move.
+          </p>
+          <div class="panel" id="trl"></div>
+        </section>
+
+        <section class="view" id="prices">
+          <h2>Price tracker</h2>
+          <p class="sub">
+            Sample prices in ₦. Select a cell to compare a producing state with
+            Lagos. Illustrative figures, not live data.
+          </p>
+          <div class="scroll"><table id="heat"></table></div>
+          <div class="panel" id="spread" style="margin-top: 16px"></div>
+        </section>
+
+        <section class="view" id="sell">
+          <h2>Sell a crop</h2>
+          <p class="sub">
+            List a crop. The fair price meter checks your price right away.
+          </p>
+          <form class="f" onsubmit="return false;">
+            <label
+              >Your name<input
+                id="sn"
+                maxlength="40"
+                placeholder="e.g. Amina Bello"
+            /></label>
+            <label>Crop<select id="sc"></select></label>
+            <label>State<select id="ss"></select></label>
+            <label
+              >Grade<select id="sg">
+                <option>A</option>
+                <option>B</option>
+              </select></label
+            >
+            <label
+              >Packaging<select id="spk">
+                <option>Crates</option>
+                <option>Bags</option>
+                <option>Bundles</option>
+                <option>Baskets</option>
+                <option>Sacks</option>
+              </select></label
+            >
+            <label
+              >Quantity available<input
+                id="sq"
+                type="number"
+                min="1"
+                value="20"
+            /></label>
+            <label
+              >Price per unit (₦)<input
+                id="sp"
+                type="number"
+                min="100"
+                value="50000"
+            /></label>
+            <div class="card" id="sprev" aria-live="polite"></div>
+            <button class="btn alt" id="sb" type="button">
+              Publish listing
+            </button>
+            <div class="msg" id="sm" role="status"></div>
+          </form>
+        </section>
+
+        <section class="view" id="settings">
+          <h2>Settings</h2>
+          <p class="sub">
+            Choose how FarmConnect looks. Your choices are saved on this device.
+          </p>
+          <fieldset class="st">
+            <legend>Theme</legend>
+            <p class="hint">
+              Pick a light or dark look, or follow your device.
+            </p>
+            <div class="opts">
+              <label class="opt"
+                ><input type="radio" name="theme" value="dark" /><span
+                  class="pv pv-dark"
+                ></span
+                ><b>Dark</b><small>Easy on the eyes at night</small></label
+              >
+              <label class="opt"
+                ><input type="radio" name="theme" value="light" /><span
+                  class="pv pv-light"
+                ></span
+                ><b>Light</b><small>Clear in bright sunlight</small></label
+              >
+              <label class="opt"
+                ><input type="radio" name="theme" value="system" /><span
+                  class="pv pv-system"
+                ></span
+                ><b>Match device</b
+                ><small>Switches with your phone</small></label
+              >
+            </div>
+          </fieldset>
+          <fieldset class="st">
+            <legend>Accent color</legend>
+            <p class="hint">Used for buttons, highlights and the logo.</p>
+            <div class="opts sw">
+              <label class="opt"
+                ><input type="radio" name="accent" value="gold" /><span
+                  class="dotc dotc-gold"
+                ></span
+                ><b>Maize</b></label
+              >
+              <label class="opt"
+                ><input type="radio" name="accent" value="green" /><span
+                  class="dotc dotc-green"
+                ></span
+                ><b>Leaf</b></label
+              >
+              <label class="opt"
+                ><input type="radio" name="accent" value="coral" /><span
+                  class="dotc dotc-coral"
+                ></span
+                ><b>Pepper</b></label
+              >
+              <label class="opt"
+                ><input type="radio" name="accent" value="sky" /><span
+                  class="dotc dotc-sky"
+                ></span
+                ><b>Sky</b></label
+              >
+            </div>
+          </fieldset>
+          <button class="btn ghost" id="strst" type="button">
+            Reset to default
+          </button>
+          <p class="msg" id="stmsg" role="status" aria-live="polite"></p>
+        </section>
+      </main>
+      <footer>
+        FarmConnect prototype. Listings, prices, transporters and checks are
+        sample data and simulated.
+      </footer>
+    </div>
+
+    <dialog id="nd">
+      <h3 id="ntitle"></h3>
+      <div class="meta" id="nmeta"></div>
+      <label style="display: grid; gap: 4px; margin-top: 12px"
+        >Your offer per unit (₦)<input id="nprice" type="number" min="100"
+      /></label>
+      <label style="display: grid; gap: 4px; margin-top: 10px"
+        >Quantity<input id="nqty" type="number" min="1"
+      /></label>
+      <div class="res" id="nhint" style="margin-top: 12px"></div>
+      <div
+        style="
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+          margin-top: 14px;
+        "
+      >
+        <button class="btn ghost" id="ncancel">Cancel</button
+        ><button class="btn alt" id="nsend">Send offer</button>
+      </div>
+    </dialog>
+    <dialog id="cd" style="width: min(900px, 94vw)"></dialog>
+    <dialog id="pd"></dialog>
+    <dialog id="dlg">
+      <h3 id="dt"></h3>
+      <div class="meta" id="dm"></div>
+      <label style="display: grid; gap: 4px; margin-top: 12px"
+        >Quantity<input id="dq" type="number" min="1"
+      /></label>
+      <label style="display: grid; gap: 4px; margin-top: 10px"
+        >Transporter<select id="dr"></select
+      ></label>
+      <div class="sum" id="ds"></div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end">
+        <button class="btn ghost" id="dc">Cancel</button
+        ><button class="btn alt" id="dg">Place order</button>
+      </div>
+    </dialog>
+
+    <script>
+      var N = "\u20a6",
+        f = function (n) {
+          return N + Math.round(n).toLocaleString("en-NG");
+        };
+      var crops = ["Maize", "Rice", "Cassava", "Yam", "Tomatoes"],
+        states = ["Ogun", "Kaduna", "Lagos", "Kano", "Oyo"];
+      var units = {
+        Maize: "100kg bag",
+        Rice: "50kg bag",
+        Cassava: "100kg bag",
+        Yam: "10 tubers",
+        Tomatoes: "basket",
+      };
+      var P = {
+        Maize: [55000, 50000, 60000, 48000, 54000],
+        Rice: [78000, 72000, 82000, 70000, 76000],
+        Cassava: [22000, 18000, 25000, 17000, 21000],
+        Yam: [32000, 26000, 38000, 28000, 31000],
+        Tomatoes: [45000, 30000, 52000, 28000, 42000],
+      };
+      var L = [
+        {
+          id: 1,
+          f: "Amina Bello",
+          c: "Maize",
+          s: "Kaduna",
+          q: 120,
+          p: 50000,
+          v: 1,
+        },
+        {
+          id: 2,
+          f: "Chinedu Okafor",
+          c: "Yam",
+          s: "Oyo",
+          q: 300,
+          p: 31000,
+          v: 1,
+        },
+        {
+          id: 3,
+          f: "Funke Adebayo",
+          c: "Tomatoes",
+          s: "Ogun",
+          q: 60,
+          p: 36000,
+          v: 1,
+        },
+        {
+          id: 4,
+          f: "Musa Ibrahim",
+          c: "Rice",
+          s: "Kano",
+          q: 80,
+          p: 70000,
+          v: 1,
+        },
+        {
+          id: 5,
+          f: "Grace Eze",
+          c: "Cassava",
+          s: "Ogun",
+          q: 200,
+          p: 21000,
+          v: 0,
+        },
+        {
+          id: 6,
+          f: "Sani Yusuf",
+          c: "Tomatoes",
+          s: "Kaduna",
+          q: 40,
+          p: 30000,
+          v: 1,
+        },
+      ];
+      var TR = [
+        { n: "Tunde A.", v: "6-tonne truck", fee: 1400, trips: 42, d: 2.1 },
+        { n: "Ibrahim S.", v: "Pickup van", fee: 1700, trips: 18, d: 4.8 },
+        { n: "Emeka O.", v: "Tipper", fee: 1100, trips: 67, d: 9.4 },
+        { n: "Halima Y.", v: "Cold-box van", fee: 2200, trips: 12, d: 1.2 },
+      ];
+      var O = [],
+        crop = "",
+        sel = ["Tomatoes", "Kaduna"],
+        cur = null,
+        nid = 7,
+        views = [
+          "market",
+          "deals",
+          "inbox",
+          "rewards",
+          "live",
+          "map",
+          "people",
+          "saved",
+          "orders",
+          "carriers",
+          "prices",
+          "sell",
+          "settings",
+        ];
+      function $(i) {
+        return document.getElementById(i);
+      }
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+      function opts(el, a, all) {
+        el.innerHTML =
+          (all ? '<option value="">' + all + "</option>" : "") +
+          a
+            .map(function (x) {
+              return "<option>" + x + "</option>";
+            })
+            .join("");
+      }
+      function show(v) {
+        views.forEach(function (x) {
+          $(x).classList.toggle("on", x === v);
+        });
+        document.querySelector(".hero").classList.toggle("off", v !== "market");
+        [].forEach.call($("nav").children, function (b) {
+          b.setAttribute("aria-current", b.dataset.v === v);
+        });
+        try {
+          history.replaceState(null, "", "#" + v);
+        } catch (e) {}
+      }
+      $("nav").onclick = function (e) {
+        if (e.target.dataset.v) show(e.target.dataset.v);
+      };
+      function avg(c) {
+        var a = P[c];
+        return (
+          a.reduce(function (x, y) {
+            return x + y;
+          }) / a.length
+        );
+      }
+      function meter(c, p) {
+        var a = P[c],
+          mn = Math.min.apply(0, a),
+          mx = Math.max.apply(0, a),
+          pos = Math.max(0, Math.min(100, ((p - mn) / (mx - mn)) * 100)),
+          d = ((p - avg(c)) / avg(c)) * 100,
+          t,
+          col;
+        if (d <= -8) {
+          t =
+            "Below market by " + Math.round(-d) + "%. You may be underpriced.";
+          col = "var(--bad)";
+        } else if (d >= 8) {
+          t = "Above market by " + Math.round(d) + "%. Buyers may compare.";
+          col = "var(--blue)";
+        } else {
+          t = "Fair price. Within 8% of the market average.";
+          col = "var(--ok)";
+        }
+        return (
+          '<div class="meter"><div class="mt"><i style="left:' +
+          pos +
+          '%"></i></div><div class="ml" style="color:' +
+          col +
+          '">' +
+          t +
+          "</div></div>"
+        );
+      }
+      function card(x, btn) {
+        return (
+          "<h3>" +
+          x.c +
+          '</h3><div class="price">' +
+          f(x.p) +
+          " <small>per " +
+          units[x.c] +
+          '</small></div><div class="meta">' +
+          esc(x.f) +
+          " · " +
+          x.s +
+          " · " +
+          x.q +
+          ' available</div><div class="' +
+          (x.v ? "ver" : "meta") +
+          '">' +
+          (x.v ? "Verified farmer" : "Verification pending") +
+          "</div>" +
+          badges(x) +
+          meter(x.c, x.p) +
+          stk(x.f) +
+          (btn || "")
+        );
+      }
+      function renderCrops() {
+        $("crops").innerHTML = ["All"]
+          .concat(crops)
+          .map(function (c) {
+            return (
+              '<button aria-pressed="' +
+              ((c === "All" && !crop) || c === crop) +
+              '" data-c="' +
+              c +
+              '">' +
+              c +
+              "</button>"
+            );
+          })
+          .join("");
+      }
+      $("crops").onclick = function (e) {
+        if (e.target.dataset.c) {
+          crop = e.target.dataset.c === "All" ? "" : e.target.dataset.c;
+          renderCrops();
+          renderList();
+        }
+      };
+      $("q").oninput = renderList;
+      $("st").onchange = renderList;
+      $("so").onchange = renderList;
+      var SHELF = { Maize: 30, Rice: 90, Cassava: 4, Yam: 45, Tomatoes: 6 };
+      function harvestDays(x) {
+        return (x.id * 2 + 1) % 6;
+      }
+      function fresh(x) {
+        var d = harvestDays(x),
+          sh = SHELF[x.c] || 14,
+          r = d / sh,
+          lb =
+            d === 0
+              ? "Harvested today"
+              : "Harvested " + d + (d === 1 ? " day" : " days") + " ago",
+          col =
+            r <= 0.34
+              ? "var(--ok)"
+              : r <= 0.67
+                ? "var(--accent)"
+                : "var(--bad)",
+          st = r <= 0.34 ? "Fresh" : r <= 0.67 ? "Sell soon" : "Use quickly";
+        return (
+          '<div class="fx"><span class="fr" style="color:' +
+          col +
+          '">' +
+          st +
+          "</span><span>" +
+          lb +
+          " · best within " +
+          sh +
+          " days</span></div>"
+        );
+      }
+      function trend(c) {
+        var b = avg(c),
+          sd = 0;
+        for (var i = 0; i < c.length; i++) sd += c.charCodeAt(i);
+        var v = [0, 1, 2, 3, 4, 5].map(function (k) {
+            return b * (1 + 0.06 * Math.sin(k * 1.2 + sd) - 0.012 * (5 - k));
+          }),
+          mn = Math.min.apply(0, v),
+          mx = Math.max.apply(0, v),
+          pts = v
+            .map(function (y, k) {
+              return (
+                Math.round(k * 52) +
+                "," +
+                Math.round(34 - ((y - mn) / (mx - mn || 1)) * 30)
+              );
+            })
+            .join(" "),
+          ch = Math.round(((v[5] - v[0]) / v[0]) * 100),
+          lp = pts.split(" ")[5].split(",");
+        return (
+          '<svg class="spark" viewBox="0 0 260 38" preserveAspectRatio="none" role="img" aria-label="' +
+          c +
+          " price trend, last 6 weeks, " +
+          (ch >= 0 ? "up " : "down ") +
+          Math.abs(ch) +
+          '%"><polyline points="' +
+          pts +
+          '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/><circle cx="' +
+          lp[0] +
+          '" cy="' +
+          lp[1] +
+          '" r="3.5" style="fill:var(--accent)"/></svg><div class="tnd"><span>6-week market price (sample)</span><b style="color:' +
+          (ch >= 0 ? "var(--ok)" : "var(--bad)") +
+          '">' +
+          (ch >= 0 ? "+" : "") +
+          ch +
+          "%</b></div>"
+        );
+      }
+      function delivery(x) {
+        var to = $("dlv").value;
+        if (!to) return "";
+        var r = SN[x.s] ? rr(x.s, to) : null;
+        if (!r) return "";
+        if (!r.km)
+          return (
+            '<div class="meta">Same state as ' +
+            to +
+            ": short local delivery.</div>"
+          );
+        var h = r.km / 55,
+          hh = Math.floor(h),
+          mm = Math.round((h - hh) * 60);
+        return (
+          '<div class="meta">To ' +
+          to +
+          ": about " +
+          r.km +
+          " km, roughly " +
+          hh +
+          " h " +
+          mm +
+          " min (estimate).</div>"
+        );
+      }
+      function extras(x) {
+        return fresh(x) + delivery(x) + trend(x.c);
+      }
+      function renderList() {
+        var q = $("q").value.toLowerCase(),
+          s = $("st").value;
+        var r = L.filter(function (x) {
+          return (
+            (!crop || x.c === crop) &&
+            (!s || x.s === s) &&
+            (!q || (x.c + " " + x.f).toLowerCase().indexOf(q) > -1)
+          );
+        });
+        r = sortL(r);
+        $("list").innerHTML = r.length
+          ? r
+              .map(function (x) {
+                return (
+                  '<div class="card">' +
+                  card(
+                    x,
+                    extras(x) +
+                      '<label class="meta" style="display:flex;gap:6px;align-items:center;cursor:pointer;margin-top:auto"><input type="checkbox" data-cmp="' +
+                      x.id +
+                      '"' +
+                      (CMP[x.id] ? " checked" : "") +
+                      '> Compare</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-o="' +
+                      x.id +
+                      '">Order</button><button class="btn alt" data-of="' +
+                      x.id +
+                      '">Make offer</button>' +
+                      (fid(x.f)
+                        ? '<button class="btn ghost" data-p="' +
+                          fid(x.f) +
+                          '">Farmer profile</button>'
+                        : "") +
+                      "</div>",
+                  ) +
+                  "</div>"
+                );
+              })
+              .join("")
+          : '<div class="empty">No listings match. Clear the search or pick another crop.</div>';
+      }
+      $("list").onclick = function (e) {
+        var id = e.target.dataset.o;
+        if (!id) return;
+        cur = L.filter(function (x) {
+          return x.id == id;
+        })[0];
+        $("dt").textContent = cur.c + " from " + cur.f;
+        $("dm").textContent = cur.s + " · " + f(cur.p) + " per " + units[cur.c];
+        $("dq").max = cur.q;
+        $("dq").value = Math.min(10, cur.q);
+        $("dr").innerHTML = TR.map(function (t, i) {
+          return (
+            '<option value="' +
+            i +
+            '">' +
+            t.n +
+            " · " +
+            t.v +
+            " · " +
+            f(t.fee) +
+            "/unit · damage " +
+            t.d.toFixed(1) +
+            "%</option>"
+          );
+        }).join("");
+        sum();
+        $("dlg").showModal();
+      };
+      function calc() {
+        var q = Math.max(1, Math.min(cur.q, +$("dq").value || 1)),
+          t = TR[+$("dr").value],
+          gross = q * cur.p,
+          disc = SK[cur.f] && SK[cur.f].rw ? Math.round(gross * 0.2) : 0,
+          sub = gross - disc,
+          del = q * t.fee,
+          svc = sub * 0.02;
+        return {
+          q: q,
+          t: t,
+          gross: gross,
+          disc: disc,
+          sub: sub,
+          del: del,
+          svc: svc,
+          tot: sub + del + svc,
+        };
+      }
+      function sum() {
+        var c = calc();
+        $("ds").innerHTML =
+          "<div><span>Crops</span><span>" +
+          f(c.gross) +
+          "</span></div>" +
+          (c.disc
+            ? '<div style="color:var(--ok);font-weight:700"><span>Streak reward (20% off)</span><span>-' +
+              f(c.disc) +
+              "</span></div>"
+            : "") +
+          "<div><span>Delivery (" +
+          c.t.n +
+          ")</span><span>" +
+          f(c.del) +
+          "</span></div><div><span>Service fee (2%)</span><span>" +
+          f(c.svc) +
+          '</span></div><div class="tot"><span>Held until delivery check</span><span>' +
+          f(c.tot) +
+          "</span></div>";
+      }
+      $("dq").oninput = sum;
+      $("dr").onchange = sum;
+      $("dc").onclick = function () {
+        $("dlg").close();
+      };
+      $("dg").onclick = function () {
+        var c = calc();
+        O.unshift({
+          id: nid++,
+          c: cur.c,
+          f: cur.f,
+          q: c.q,
+          sub: c.sub,
+          tot: c.tot,
+          t: c.t,
+          st: 0,
+          pk: 3,
+          dl: 3,
+          res: null,
+        });
+        if (c.disc) {
+          SK[cur.f].rw = false;
+          SK[cur.f].n = 0;
+          addFeed(
+            "Buyer",
+            "Streak reward used: 20% off (" + f(c.disc) + ") from " + cur.f,
+          );
+          renderStreaks();
+        }
+        addFeed(
+          "Buyer",
+          "You ordered " +
+            c.q +
+            " × " +
+            cur.c +
+            " from " +
+            cur.f +
+            ", carried by " +
+            c.t.n,
+        );
+        $("dlg").close();
+        renderOrders();
+        show("orders");
+      };
+      function renderOrders() {
+        if (!O.length) {
+          $("ordlist").innerHTML =
+            '<div class="empty">No deliveries yet. Place an order in the marketplace to start one.</div>';
+          return;
+        }
+        var S = ["Ordered", "Pickup check", "Delivery check", "Settled"];
+        $("ordlist").innerHTML = O.map(function (o, i) {
+          var h =
+            '<div class="ord"><b>' +
+            o.q +
+            " × " +
+            o.c +
+            "</b> from " +
+            esc(o.f) +
+            " · " +
+            o.t.n +
+            " (" +
+            o.t.v +
+            ") · " +
+            f(o.tot) +
+            " held" +
+            '<div class="steps">' +
+            S.map(function (t, k) {
+              return (
+                '<span class="step' +
+                (k <= o.st + (o.st >= 2 ? 1 : 0) ? " done" : "") +
+                '">' +
+                t +
+                "</span>"
+              );
+            }).join("") +
+            "</div>";
+          if (o.st === 0)
+            h +=
+              '<div class="chk"><b>Pickup check at the farm</b><br><label>Visible damage at pickup: <b id="pk' +
+              i +
+              '">' +
+              o.pk +
+              '%</b><input type="range" min="0" max="30" value="' +
+              o.pk +
+              '" data-s="pk" data-i="' +
+              i +
+              '"></label><button class="btn alt" data-a="pick" data-i="' +
+              i +
+              '">Confirm pickup</button></div>';
+          else if (o.st === 1)
+            h +=
+              '<div class="chk"><b>Delivery check at the buyer</b><div class="meta">Damage logged at pickup: ' +
+              o.pk +
+              '%</div><label>Visible damage on arrival: <b id="dl' +
+              i +
+              '">' +
+              o.dl +
+              '%</b><input type="range" min="0" max="40" value="' +
+              o.dl +
+              '" data-s="dl" data-i="' +
+              i +
+              '"></label><button class="btn alt" data-a="drop" data-i="' +
+              i +
+              '">Confirm delivery</button></div>';
+          else {
+            var r = o.res;
+            h +=
+              '<div class="res' +
+              (r.adj ? " bad" : "") +
+              '"><b>' +
+              (r.adj
+                ? "Handling dispute settled automatically"
+                : "Delivered in good condition") +
+              "</b><br>Damage added in transit: " +
+              r.tr +
+              "% (pickup " +
+              o.pk +
+              "%, arrival " +
+              o.dl +
+              "%). " +
+              (r.adj
+                ? "Buyer is refunded " +
+                  f(r.adj) +
+                  " and pays " +
+                  f(o.tot - r.adj) +
+                  ". " +
+                  o.t.n +
+                  "’s rating drops."
+                : "Full payment of " +
+                  f(o.tot) +
+                  " is released. " +
+                  o.t.n +
+                  "’s rating improves.") +
+              "</div>";
+          }
+          return h + "</div>";
+        }).join("");
+      }
+      $("ordlist").oninput = function (e) {
+        var d = e.target.dataset;
+        if (d.s) {
+          O[d.i][d.s] = +e.target.value;
+          $(d.s + d.i).textContent = e.target.value + "%";
+        }
+      };
+      $("ordlist").onclick = function (e) {
+        var d = e.target.dataset,
+          o = O[d.i];
+        if (!d.a) return;
+        if (d.a === "pick") {
+          o.st = 1;
+          o.dl = Math.max(o.pk, o.dl);
+          addFeed(
+            "Transporter",
+            o.t.n +
+              " picked up " +
+              o.q +
+              " × " +
+              o.c +
+              " from " +
+              o.f +
+              " (" +
+              o.pk +
+              "% damage logged)",
+          );
+        } else {
+          var tr = Math.max(0, o.dl - o.pk),
+            adj = tr > 5 ? Math.round((o.sub * tr) / 100) : 0,
+            t = o.t;
+          t.d = (t.d * t.trips + tr) / (t.trips + 1);
+          t.trips++;
+          o.res = { tr: tr, adj: adj };
+          o.st = 2;
+          renderTr();
+          bump(o.f);
+          addFeed(
+            "Transporter",
+            t.n +
+              " delivered " +
+              o.q +
+              " × " +
+              o.c +
+              (adj
+                ? " with " + tr + "% transit damage, " + f(adj) + " refunded"
+                : " in good condition"),
+          );
+        }
+        renderOrders();
+      };
+      function renderTr() {
+        var a = TR.slice().sort(function (x, y) {
+          return x.d - y.d;
+        });
+        $("trl").innerHTML = a
+          .map(function (t, i) {
+            var c =
+                t.d < 3
+                  ? "var(--ok)"
+                  : t.d < 6
+                    ? "var(--accent)"
+                    : "var(--bad)",
+              l = t.d < 3 ? "Excellent" : t.d < 6 ? "Fair" : "Poor";
+            return (
+              '<div class="tr"><div class="rank">' +
+              (i + 1) +
+              "</div><div><b>" +
+              t.n +
+              '</b><div class="meta">' +
+              t.v +
+              " · " +
+              t.trips +
+              " trips · " +
+              f(t.fee) +
+              ' per unit</div></div><div style="text-align:right"><span class="pill" style="background:' +
+              c +
+              '">' +
+              l +
+              '</span><div class="meta">avg damage ' +
+              t.d.toFixed(1) +
+              "%</div></div></div>"
+            );
+          })
+          .join("");
+      }
+      function heat() {
+        var h =
+          "<tr><th>Crop</th>" +
+          states
+            .map(function (s) {
+              return "<th>" + s + "</th>";
+            })
+            .join("") +
+          "</tr>";
+        crops.forEach(function (c) {
+          var mn = Math.min.apply(0, P[c]),
+            mx = Math.max.apply(0, P[c]);
+          h +=
+            "<tr><td><b>" +
+            c +
+            '</b><span class="unit">per ' +
+            units[c] +
+            "</span></td>" +
+            P[c]
+              .map(function (v, i) {
+                var a = (v - mn) / (mx - mn);
+                return (
+                  '<td class="cell" tabindex="0" data-c="' +
+                  c +
+                  '" data-s="' +
+                  states[i] +
+                  '" aria-selected="' +
+                  (sel[0] === c && sel[1] === states[i]) +
+                  '" style="background:rgba(232,163,23,' +
+                  (0.1 + a * 0.55).toFixed(2) +
+                  ')">' +
+                  f(v) +
+                  "</td>"
+                );
+              })
+              .join("") +
+            "</tr>";
+        });
+        $("heat").innerHTML = h;
+      }
+      function pick(t) {
+        if (t.dataset && t.dataset.c) {
+          sel = [t.dataset.c, t.dataset.s];
+          heat();
+          spread();
+        }
+      }
+      $("heat").onclick = function (e) {
+        pick(e.target);
+      };
+      $("heat").onkeydown = function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          pick(e.target);
+        }
+      };
+      function spread() {
+        var c = sel[0],
+          s = sel[1],
+          v = P[c][states.indexOf(s)],
+          lg = P[c][2],
+          mx = Math.max.apply(0, P[c]),
+          gap = lg - v,
+          pc = Math.round((gap / v) * 100);
+        var msg =
+          s === "Lagos"
+            ? "Lagos is the demand end. Select a producing state to compare."
+            : gap > 0
+              ? "A Lagos buyer pays " +
+                f(gap) +
+                " (" +
+                pc +
+                "%) more per " +
+                units[c] +
+                " than the " +
+                s +
+                " price. Transport, handling and middlemen absorb that gap."
+              : "The " +
+                s +
+                " price is at or above Lagos for " +
+                c +
+                ", so shipping south adds little.";
+        $("spread").innerHTML =
+          "<h3>" +
+          c +
+          ": " +
+          s +
+          ' vs Lagos</h3><div class="bars">' +
+          [
+            [s, v, "var(--ok)"],
+            ["Lagos", lg, "var(--blue)"],
+          ]
+            .map(function (r) {
+              return (
+                '<div class="brow"><span>' +
+                r[0] +
+                '</span><div class="track"><div class="fill" style="width:' +
+                (r[1] / mx) * 100 +
+                "%;background:" +
+                r[2] +
+                '"></div></div><b>' +
+                f(r[1]) +
+                "</b></div>"
+              );
+            })
+            .join("") +
+          '</div><div class="lead">' +
+          msg +
+          "</div>";
+      }
+      function prev() {
+        var p = {
+          c: $("sc").value,
+          p: +$("sp").value || 0,
+          f: $("sn").value || "You",
+          s: $("ss").value,
+          q: +$("sq").value || 0,
+          v: 0,
+          g: $("sg").value,
+          pk: $("spk").value,
+        };
+        $("sprev").innerHTML = card(p);
+      }
+      ["sn", "sc", "ss", "sq", "sp", "sg", "spk"].forEach(function (i) {
+        $(i).oninput = prev;
+        $(i).onchange = prev;
+      });
+      $("sb").onclick = function () {
+        var n = $("sn").value.trim(),
+          q = +$("sq").value,
+          p = +$("sp").value;
+        if (!n || q < 1 || p < 100) {
+          $("sm").style.color = "var(--bad)";
+          $("sm").textContent =
+            "Enter your name, a quantity of at least 1 and a price of at least ₦100.";
+          return;
+        }
+        L.unshift({
+          id: nid++,
+          f: n,
+          c: $("sc").value,
+          s: $("ss").value,
+          q: q,
+          p: p,
+          v: 0,
+          g: $("sg").value,
+          pk: $("spk").value,
+        });
+        if (!fid(n))
+          PF.push({
+            id: "f" + nid,
+            r: "Farmer",
+            n: n,
+            s: $("ss").value,
+            c: [$("sc").value],
+            v: 0,
+            k: "New seller",
+            b: "New on FarmConnect.",
+          });
+        renderPeople();
+        addFeed(
+          "Farmer",
+          n +
+            " listed " +
+            q +
+            " × " +
+            $("sc").value +
+            " at " +
+            f(p) +
+            " per " +
+            units[$("sc").value],
+        );
+        $("sm").style.color = "";
+        $("sm").textContent =
+          "Listed. It is live in the marketplace, pending verification.";
+        renderList();
+      };
+      var PF = [
+        {
+          id: "f1",
+          r: "Farmer",
+          n: "Amina Bello",
+          s: "Kaduna",
+          c: ["Maize"],
+          v: 1,
+          k: "4.8 rating · 36 sales",
+          b: "14 hectares of maize near Zaria. Sells dry, graded maize in 100kg bags.",
+        },
+        {
+          id: "f2",
+          r: "Farmer",
+          n: "Chinedu Okafor",
+          s: "Oyo",
+          c: ["Yam"],
+          v: 1,
+          k: "4.6 rating · 52 sales",
+          b: "Yam grower supplying markets in Ibadan and Lagos for eight years.",
+        },
+        {
+          id: "f3",
+          r: "Farmer",
+          n: "Funke Adebayo",
+          s: "Ogun",
+          c: ["Tomatoes"],
+          v: 1,
+          k: "4.7 rating · 29 sales",
+          b: "Grows tomatoes and packs them in crates to cut bruising in transit.",
+        },
+        {
+          id: "f4",
+          r: "Farmer",
+          n: "Musa Ibrahim",
+          s: "Kano",
+          c: ["Rice"],
+          v: 1,
+          k: "4.5 rating · 41 sales",
+          b: "Paddy and milled rice, sold in 50kg bags.",
+        },
+        {
+          id: "f5",
+          r: "Farmer",
+          n: "Grace Eze",
+          s: "Ogun",
+          c: ["Cassava"],
+          v: 0,
+          k: "New seller",
+          b: "Cassava farmer waiting for FarmConnect verification.",
+        },
+        {
+          id: "f6",
+          r: "Farmer",
+          n: "Sani Yusuf",
+          s: "Kaduna",
+          c: ["Tomatoes"],
+          v: 1,
+          k: "4.4 rating · 18 sales",
+          b: "Dry-season tomato grower near Kaduna. Looking for Lagos buyers.",
+        },
+        {
+          id: "b1",
+          r: "Buyer",
+          n: "Mama Nkechi Foods",
+          s: "Lagos",
+          c: ["Tomatoes", "Yam"],
+          v: 1,
+          k: "Pays within 48h · 52 orders",
+          b: "Restaurant group buying about 40 baskets of tomatoes a week. Wants sorted, undamaged produce.",
+        },
+        {
+          id: "b2",
+          r: "Buyer",
+          n: "Lekki Fresh Market",
+          s: "Lagos",
+          c: ["Rice", "Yam", "Maize"],
+          v: 1,
+          k: "Pays on delivery · 33 orders",
+          b: "Retail market supplying households in Lekki with weekly deliveries.",
+        },
+        {
+          id: "b3",
+          r: "Buyer",
+          n: "Sagamu Garri Processors",
+          s: "Ogun",
+          c: ["Cassava"],
+          v: 1,
+          k: "Pays within 72h · 21 orders",
+          b: "Processor taking about 15 tonnes of cassava a week.",
+        },
+        {
+          id: "b4",
+          r: "Buyer",
+          n: "Kano Grain Traders",
+          s: "Kano",
+          c: ["Maize", "Rice"],
+          v: 0,
+          k: "Verification pending",
+          b: "Wholesaler looking for bulk maize and rice from northern farms.",
+        },
+        {
+          id: "b5",
+          r: "Buyer",
+          n: "Ibadan Hotel Group",
+          s: "Oyo",
+          c: ["Tomatoes", "Yam", "Rice"],
+          v: 1,
+          k: "Pays within 48h · 27 orders",
+          b: "Hotel kitchens buying fresh produce twice a week.",
+        },
+      ];
+      var BM = {},
+        pRole = "Farmer",
+        pcur = "";
+      try {
+        BM = JSON.parse(localStorage.getItem("fc_saved") || "{}") || {};
+      } catch (e) {}
+      function fid(n) {
+        var r = PF.filter(function (p) {
+          return p.r === "Farmer" && p.n === n;
+        })[0];
+        return r ? r.id : "";
+      }
+      function pcard(p) {
+        var on = !!BM[p.id];
+        return (
+          '<div class="card"><div style="display:flex;justify-content:space-between;gap:8px"><span class="tag">' +
+          p.r +
+          '</span><button class="star" data-b="' +
+          p.id +
+          '" aria-pressed="' +
+          on +
+          '" aria-label="' +
+          (on ? "Remove bookmark for " : "Bookmark ") +
+          esc(p.n) +
+          '">' +
+          (on ? "★ Saved" : "☆ Save") +
+          "</button></div><h3>" +
+          esc(p.n) +
+          '</h3><div class="meta">' +
+          p.s +
+          " · " +
+          p.c.join(", ") +
+          '</div><div class="' +
+          (p.v ? "ver" : "meta") +
+          '">' +
+          (p.v ? "Verified" : "Verification pending") +
+          " · " +
+          p.k +
+          '</div><button class="btn ghost" data-p="' +
+          p.id +
+          '">View profile</button></div>'
+        );
+      }
+      function renderPeople() {
+        var q = $("pq").value.toLowerCase();
+        $("prole").innerHTML = ["Farmer", "Buyer"]
+          .map(function (r) {
+            return (
+              '<button aria-pressed="' +
+              (r === pRole) +
+              '" data-r="' +
+              r +
+              '">' +
+              r +
+              "s</button>"
+            );
+          })
+          .join("");
+        var a = PF.filter(function (p) {
+          return (
+            p.r === pRole &&
+            (!q ||
+              (p.n + " " + p.s + " " + p.c.join(" ")).toLowerCase().indexOf(q) >
+                -1)
+          );
+        });
+        $("plist").innerHTML = a.length
+          ? a.map(pcard).join("")
+          : '<div class="empty">No profiles match your search.</div>';
+      }
+      function renderSaved() {
+        var a = PF.filter(function (p) {
+          return BM[p.id];
+        });
+        $("svn").textContent = a.length ? " (" + a.length + ")" : "";
+        $("slist").innerHTML = a.length
+          ? a.map(pcard).join("")
+          : '<div class="empty">Nothing saved yet. Open Profiles and tap Save on any farmer or buyer.</div>';
+      }
+      function openP(id) {
+        pcur = id;
+        var p = PF.filter(function (x) {
+            return x.id === id;
+          })[0],
+          on = !!BM[id],
+          ls =
+            p.r === "Farmer"
+              ? L.filter(function (x) {
+                  return x.f === p.n;
+                })
+              : [];
+        $("pd").innerHTML =
+          '<span class="tag">' +
+          p.r +
+          '</span><h3 style="margin:8px 0 4px">' +
+          esc(p.n) +
+          '</h3><div class="meta">' +
+          p.s +
+          '</div><div class="' +
+          (p.v ? "ver" : "meta") +
+          '" style="margin:6px 0">' +
+          (p.v ? "Verified" : "Verification pending") +
+          " · " +
+          p.k +
+          "</div><p>" +
+          esc(p.b) +
+          '</p><div class="meta"><b>' +
+          (p.r === "Farmer" ? "Grows" : "Buys") +
+          ":</b> " +
+          p.c.join(", ") +
+          "</div>" +
+          (ls.length
+            ? '<div class="sum">' +
+              ls
+                .map(function (x) {
+                  return (
+                    "<div><span>" +
+                    x.c +
+                    " · " +
+                    x.q +
+                    " available</span><span>" +
+                    f(x.p) +
+                    " per " +
+                    units[x.c] +
+                    "</span></div>"
+                  );
+                })
+                .join("") +
+              "</div>"
+            : "") +
+          '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn ghost" data-x="1">Close</button><button class="btn alt" data-b="' +
+          id +
+          '">' +
+          (on ? "★ Saved" : "☆ Save profile") +
+          "</button></div>";
+        if (!$("pd").open) $("pd").showModal();
+      }
+      $("prole").onclick = function (e) {
+        if (e.target.dataset.r) {
+          pRole = e.target.dataset.r;
+          renderPeople();
+        }
+      };
+      $("pq").oninput = renderPeople;
+      document.addEventListener("click", function (e) {
+        var d = e.target.dataset || {};
+        if (d.b) {
+          if (BM[d.b]) delete BM[d.b];
+          else BM[d.b] = 1;
+          try {
+            localStorage.setItem("fc_saved", JSON.stringify(BM));
+          } catch (x) {}
+          renderPeople();
+          renderSaved();
+          if ($("pd").open) openP(pcur);
+        } else if (d.p) openP(d.p);
+        else if (d.x) $("pd").close();
+      });
+      var FD = [],
+        paused = false,
+        fRole = "All",
+        ft = null,
+        BYS = [],
+        RC = { Farmer: "#e8a317", Buyer: "#9fb4ff", Transporter: "#8fd6a4" };
+      var CT = {
+          Lagos: [6.5244, 3.3792],
+          Ogun: [7.1475, 3.3619],
+          Oyo: [7.3775, 3.947],
+          Kaduna: [10.5105, 7.4165],
+          Kano: [12.0022, 8.592],
+        },
+        TL = {
+          "Tunde A.": "Kaduna",
+          "Ibrahim S.": "Kano",
+          "Emeka O.": "Oyo",
+          "Halima Y.": "Lagos",
+        };
+      function rnd(a) {
+        return a[Math.floor(Math.random() * a.length)];
+      }
+      function addFeed(r, t) {
+        FD.unshift({ r: r, t: t, w: new Date() });
+        if (FD.length > 40) FD.pop();
+        renderFeed();
+      }
+      function renderChips() {
+        $("fchips").innerHTML = ["All", "Farmer", "Buyer", "Transporter"]
+          .map(function (r) {
+            return (
+              '<button aria-pressed="' +
+              (r === fRole) +
+              '" data-fr="' +
+              r +
+              '">' +
+              (r === "All" ? "All" : r + "s") +
+              "</button>"
+            );
+          })
+          .join("");
+      }
+      function renderFeed() {
+        var a = FD.filter(function (e) {
+          return fRole === "All" || e.r === fRole;
+        });
+        $("feedlist").innerHTML = a.length
+          ? a
+              .map(function (e) {
+                return (
+                  '<div class="ev"><span class="rt" style="background:' +
+                  RC[e.r] +
+                  ';color:#14301f">' +
+                  e.r +
+                  "</span><span>" +
+                  esc(e.t) +
+                  '</span><span class="meta">' +
+                  e.w.toLocaleTimeString("en-NG", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  }) +
+                  "</span></div>"
+                );
+              })
+              .join("")
+          : '<div class="empty">Waiting for the first update.</div>';
+      }
+      function sim() {
+        var k = Math.floor(Math.random() * 3),
+          fm = rnd(
+            PF.filter(function (p) {
+              return p.r === "Farmer";
+            }),
+          ),
+          by = rnd(
+            PF.filter(function (p) {
+              return p.r === "Buyer";
+            }),
+          ),
+          t = rnd(TR),
+          n = (2 + Math.floor(Math.random() * 9)) * 5;
+        if (k === 0)
+          addFeed(
+            "Farmer",
+            fm.n +
+              " in " +
+              fm.s +
+              " added " +
+              n +
+              " × " +
+              fm.c[0] +
+              " for pickup this week",
+          );
+        else if (k === 1)
+          addFeed(
+            "Buyer",
+            by.n +
+              " in " +
+              by.s +
+              " is looking for " +
+              n +
+              " × " +
+              rnd(by.c) +
+              " and pays on delivery",
+          );
+        else
+          addFeed(
+            "Transporter",
+            t.n +
+              " (" +
+              t.v +
+              ") is heading to " +
+              rnd(["Lagos", "Kaduna", "Kano", "Ibadan"]) +
+              " with room for " +
+              n +
+              " units",
+          );
+      }
+      function startFeed() {
+        clearInterval(ft);
+        ft = setInterval(function () {
+          if (!paused) sim();
+        }, 4500);
+      }
+      $("fchips").onclick = function (e) {
+        if (e.target.dataset.fr) {
+          fRole = e.target.dataset.fr;
+          renderChips();
+          renderFeed();
+        }
+      };
+      $("fp").onclick = function () {
+        paused = !paused;
+        $("fp").textContent = paused ? "Resume" : "Pause";
+        $("lv").className = "live" + (paused ? " paused" : "");
+      };
+      function glink(o, b) {
+        return (
+          "https://www.google.com/maps/dir/?api=1&origin=" +
+          encodeURIComponent(o + ", Nigeria") +
+          "&destination=" +
+          encodeURIComponent(b.n + ", " + b.s + ", Nigeria") +
+          "&travelmode=driving"
+        );
+      }
+      function initMap() {
+        BYS = PF.filter(function (p) {
+          return p.r === "Buyer";
+        });
+        $("mt").innerHTML = TR.map(function (t, i) {
+          return (
+            '<option value="' + i + '">' + t.n + " · " + TL[t.n] + "</option>"
+          );
+        }).join("");
+        $("mb").innerHTML = BYS.map(function (b, i) {
+          return (
+            '<option value="' + i + '">' + esc(b.n) + " · " + b.s + "</option>"
+          );
+        }).join("");
+        var refit = function () {
+          var r = rr(TL[TR[+$("mt").value].n], BYS[+$("mb").value].s);
+          fitMap(
+            r.p.map(function (n) {
+              return CY[n];
+            }),
+          );
+        };
+        $("mt").onchange = refit;
+        $("mb").onchange = refit;
+        $("mdep").onchange = function () {
+          drawMap(1);
+        };
+        $("mzi").onclick = function () {
+          zoomMap(0.6);
+        };
+        $("mzo").onclick = function () {
+          zoomMap(1 / 0.6);
+        };
+        $("mfit").onclick = refit;
+        $("mrst").onclick = function () {
+          MV.x = 0;
+          MV.y = 0;
+          MV.w = 800;
+          MV.h = 660;
+          drawMap();
+        };
+        $("mfs").onclick = function () {
+          var f = $("mapwrap").classList.toggle("full");
+          this.textContent = f ? "Close expanded map" : "Expand map";
+          this.setAttribute("aria-pressed", f);
+          setTimeout(refit, 30);
+        };
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && $("mapwrap").classList.contains("full"))
+            $("mfs").click();
+        });
+        $("mly").onchange = function (e) {
+          MV.ly[e.target.dataset.ly] = e.target.checked ? 1 : 0;
+          drawMap(1);
+        };
+        var bx = $("mapsvg"),
+          ptr = {},
+          lastD = 0;
+        function vbPt(e) {
+          var q = bx.getBoundingClientRect(),
+            k = Math.max(MV.w / q.width, MV.h / q.height);
+          return {
+            k: k,
+            x: MV.x + (e.clientX - q.left - q.width / 2) * k + MV.w / 2,
+            y: MV.y + (e.clientY - q.top - q.height / 2) * k + MV.h / 2,
+          };
+        }
+        bx.addEventListener(
+          "wheel",
+          function (e) {
+            e.preventDefault();
+            var c = vbPt(e);
+            zoomMap(e.deltaY < 0 ? 0.85 : 1 / 0.85, c.x, c.y);
+          },
+          { passive: false },
+        );
+        bx.addEventListener("pointerdown", function (e) {
+          ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
+          bx.setPointerCapture(e.pointerId);
+          var v = bx.querySelector("svg");
+          if (v) v.classList.add("drag");
+          lastD = 0;
+        });
+        bx.addEventListener("pointermove", function (e) {
+          var o = ptr[e.pointerId];
+          if (!o) return;
+          var ids = Object.keys(ptr),
+            c = vbPt(e);
+          if (ids.length === 2) {
+            var a = ptr[ids[0]],
+              b = ptr[ids[1]];
+            ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
+            var d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (lastD) zoomMap(lastD / d, c.x, c.y);
+            lastD = d;
+            return;
+          }
+          MV.x -= (e.clientX - o.x) * c.k;
+          MV.y -= (e.clientY - o.y) * c.k;
+          ptr[e.pointerId] = { x: e.clientX, y: e.clientY };
+          setVB();
+        });
+        function up(e) {
+          delete ptr[e.pointerId];
+          lastD = 0;
+          var v = bx.querySelector("svg");
+          if (v && !Object.keys(ptr).length) v.classList.remove("drag");
+        }
+        bx.addEventListener("pointerup", up);
+        bx.addEventListener("pointercancel", up);
+        drawMap();
+      }
+      var CY = {
+        Lagos: [6.5244, 3.3792],
+        Abeokuta: [7.1475, 3.3619],
+        Ibadan: [7.3775, 3.947],
+        Ogbomosho: [8.13, 4.24],
+        Ilorin: [8.4966, 4.5421],
+        Jebba: [9.13, 4.82],
+        Mokwa: [9.3, 5.05],
+        Bida: [9.0833, 6.0167],
+        Abuja: [9.0765, 7.3986],
+        Kaduna: [10.5105, 7.4165],
+        Zaria: [11.0855, 7.7199],
+        Kano: [12.0022, 8.592],
+        Potiskum: [11.71, 11.08],
+        Maiduguri: [11.8333, 13.15],
+        Jos: [9.8965, 8.8583],
+        Gusau: [12.17, 6.66],
+        Sokoto: [13.0622, 5.2339],
+        Lokoja: [7.8023, 6.7333],
+        Ore: [6.75, 4.88],
+        Benin: [6.335, 5.6037],
+        Onitsha: [6.1498, 6.7857],
+        Enugu: [6.4584, 7.5464],
+        Owerri: [5.485, 7.035],
+        "Port Harcourt": [4.8156, 7.0498],
+      };
+      var MJ = [
+        "Lagos",
+        "Ibadan",
+        "Abuja",
+        "Kaduna",
+        "Kano",
+        "Maiduguri",
+        "Sokoto",
+        "Benin",
+        "Enugu",
+        "Port Harcourt",
+        "Jos",
+      ];
+      var RD = [
+        ["Lagos", "Ibadan"],
+        ["Lagos", "Abeokuta"],
+        ["Abeokuta", "Ibadan"],
+        ["Ibadan", "Ogbomosho"],
+        ["Ogbomosho", "Ilorin"],
+        ["Ilorin", "Jebba"],
+        ["Jebba", "Mokwa"],
+        ["Mokwa", "Bida"],
+        ["Bida", "Abuja"],
+        ["Abuja", "Kaduna"],
+        ["Kaduna", "Zaria"],
+        ["Zaria", "Kano"],
+        ["Kano", "Potiskum"],
+        ["Potiskum", "Maiduguri"],
+        ["Kaduna", "Jos"],
+        ["Kaduna", "Gusau"],
+        ["Gusau", "Sokoto"],
+        ["Abuja", "Lokoja"],
+        ["Lokoja", "Benin"],
+        ["Lagos", "Ore"],
+        ["Ore", "Benin"],
+        ["Benin", "Onitsha"],
+        ["Onitsha", "Enugu"],
+        ["Onitsha", "Owerri"],
+        ["Owerri", "Port Harcourt"],
+      ];
+      var SN = {
+        Lagos: "Lagos",
+        Ogun: "Abeokuta",
+        Oyo: "Ibadan",
+        Kaduna: "Kaduna",
+        Kano: "Kano",
+      };
+      $("dlv").innerHTML += Object.keys(SN)
+        .map(function (k) {
+          return '<option value="' + k + '">Deliver to ' + k + "</option>";
+        })
+        .join("");
+      $("dlv").onchange = renderList;
+      var OL = [
+        [6.4, 2.7],
+        [7.0, 2.72],
+        [7.55, 2.75],
+        [8.1, 2.7],
+        [8.65, 2.8],
+        [9.2, 3.05],
+        [9.85, 3.15],
+        [10.4, 3.45],
+        [10.95, 3.6],
+        [11.45, 3.55],
+        [11.85, 3.75],
+        [12.45, 4.2],
+        [13.05, 4.6],
+        [13.65, 5.25],
+        [13.6, 6.0],
+        [13.4, 6.8],
+        [13.3, 7.5],
+        [13.15, 8.3],
+        [13.0, 9.0],
+        [13.0, 9.8],
+        [13.2, 10.8],
+        [13.6, 11.6],
+        [13.7, 12.5],
+        [13.65, 13.4],
+        [13.9, 13.6],
+        [13.5, 14.1],
+        [13.3, 14.45],
+        [12.6, 14.6],
+        [12.0, 14.45],
+        [11.4, 14.2],
+        [10.8, 13.95],
+        [10.15, 13.75],
+        [9.8, 13.8],
+        [9.3, 13.45],
+        [8.7, 13.0],
+        [7.9, 12.45],
+        [7.2, 12.0],
+        [6.9, 11.6],
+        [6.4, 11.1],
+        [6.75, 10.6],
+        [6.7, 10.0],
+        [6.2, 9.5],
+        [5.8, 9.0],
+        [5.3, 8.8],
+        [4.9, 8.7],
+        [4.5, 8.6],
+        [4.35, 8.4],
+        [4.45, 7.7],
+        [4.4, 7.2],
+        [4.3, 6.6],
+        [4.3, 6.2],
+        [4.55, 5.75],
+        [5.0, 5.45],
+        [5.4, 5.2],
+        [5.7, 5.05],
+        [5.95, 4.8],
+        [6.25, 4.25],
+        [6.35, 3.7],
+        [6.4, 3.35],
+        [6.43, 2.9],
+      ];
+      var NR = [
+        [11.85, 4.2],
+        [10.78, 4.76],
+        [10.4, 4.6],
+        [9.15, 4.82],
+        [8.9, 5.5],
+        [8.6, 6.35],
+        [7.8, 6.74],
+        [7.1, 6.73],
+        [6.15, 6.78],
+        [5.5, 6.3],
+        [4.85, 6.1],
+      ];
+      var BN = [
+        [9.4, 12.9],
+        [9.28, 12.45],
+        [9.45, 12.0],
+        [9.3, 11.2],
+        [8.9, 10.6],
+        [8.18, 9.75],
+        [7.74, 8.52],
+        [7.6, 7.6],
+        [7.8, 6.74],
+      ];
+      var ADJ = {};
+      function hv(A, B) {
+        var r = Math.PI / 180,
+          h =
+            Math.pow(Math.sin(((B[0] - A[0]) * r) / 2), 2) +
+            Math.cos(A[0] * r) *
+              Math.cos(B[0] * r) *
+              Math.pow(Math.sin(((B[1] - A[1]) * r) / 2), 2);
+        return 2 * 6371 * Math.asin(Math.sqrt(h));
+      }
+      RD.forEach(function (e) {
+        var d = hv(CY[e[0]], CY[e[1]]) * 1.2;
+        (ADJ[e[0]] = ADJ[e[0]] || []).push([e[1], d]);
+        (ADJ[e[1]] = ADJ[e[1]] || []).push([e[0], d]);
+      });
+      function sp(s, t, ban) {
+        if (s === t) return { km: 0, p: [s] };
+        var D = {},
+          P = {},
+          Q = Object.keys(CY);
+        Q.forEach(function (k) {
+          D[k] = 1e9;
+        });
+        D[s] = 0;
+        while (Q.length) {
+          Q.sort(function (x, y) {
+            return D[x] - D[y];
+          });
+          var u = Q.shift();
+          if (u === t || D[u] >= 1e9) break;
+          (ADJ[u] || []).forEach(function (e) {
+            if (ban && (ban === u + "|" + e[0] || ban === e[0] + "|" + u))
+              return;
+            var n = D[u] + e[1];
+            if (n < D[e[0]]) {
+              D[e[0]] = n;
+              P[e[0]] = u;
+            }
+          });
+        }
+        if (D[t] >= 1e9) return null;
+        var p = [t];
+        while (p[0] !== s) p.unshift(P[p[0]]);
+        return { km: Math.round(D[t]), p: p };
+      }
+      function rr(a, b) {
+        return sp(SN[a], SN[b]);
+      }
+      function altRoute(best) {
+        var o = null;
+        for (var i = 0; i + 1 < best.p.length; i++) {
+          var r = sp(
+            best.p[0],
+            best.p[best.p.length - 1],
+            best.p[i] + "|" + best.p[i + 1],
+          );
+          if (r && (!o || r.km < o.km)) o = r;
+        }
+        return o;
+      }
+      var MV = {
+        x: 0,
+        y: 0,
+        w: 800,
+        h: 660,
+        lab: false,
+        ly: { roads: 1, rivers: 1, labels: 1, people: 1, alt: 1 },
+      };
+      function hm(m) {
+        m = Math.round(m);
+        return (
+          ("0" + (Math.floor(m / 60) % 24)).slice(-2) +
+          ":" +
+          ("0" + (m % 60)).slice(-2) +
+          (m >= 1440 ? " (+" + Math.floor(m / 1440) + "d)" : "")
+        );
+      }
+      function setVB() {
+        var v = document.querySelector("#mapsvg svg");
+        if (v)
+          v.setAttribute(
+            "viewBox",
+            MV.x + " " + MV.y + " " + MV.w + " " + MV.h,
+          );
+      }
+      function zoomMap(f, cx, cy) {
+        var nw = Math.max(80, Math.min(800, MV.w * f)),
+          k = nw / MV.w;
+        cx = cx == null ? MV.x + MV.w / 2 : cx;
+        cy = cy == null ? MV.y + MV.h / 2 : cy;
+        MV.x = cx - (cx - MV.x) * k;
+        MV.y = cy - (cy - MV.y) * k;
+        MV.w = nw;
+        MV.h *= k;
+        var lab = 800 / MV.w >= 1.6;
+        if (lab !== MV.lab) drawMap();
+        else setVB();
+      }
+      function fitMap(pts) {
+        var xs = pts.map(function (c) {
+            return P2(c)[0];
+          }),
+          ys = pts.map(function (c) {
+            return P2(c)[1];
+          }),
+          x0 = Math.min.apply(0, xs) - 70,
+          x1 = Math.max.apply(0, xs) + 70,
+          y0 = Math.min.apply(0, ys) - 70,
+          y1 = Math.max.apply(0, ys) + 70,
+          bx = $("mapsvg").getBoundingClientRect(),
+          r = bx.width / Math.max(1, bx.height),
+          w = Math.max(160, x1 - x0, (y1 - y0) * r),
+          h = w / r;
+        MV.x = (x0 + x1) / 2 - w / 2;
+        MV.y = (y0 + y1) / 2 - h / 2;
+        MV.w = w;
+        MV.h = h;
+        MV.lab = 800 / MV.w >= 1.6;
+        drawMap(1);
+      }
+      function legsHtml(r, alt) {
+        var dep = ($("mdep").value || "06:00").split(":"),
+          m0 = +dep[0] * 60 + +dep[1],
+          cum = 0,
+          h =
+            '<table class="legs"><tr><th>Stop</th><th>Leg</th><th>Total</th><th>Arrive</th></tr><tr><td>' +
+            r.p[0] +
+            "</td><td></td><td>0 km</td><td>" +
+            hm(m0) +
+            "</td></tr>";
+        for (var i = 1; i < r.p.length; i++) {
+          var d = Math.round(hv(CY[r.p[i - 1]], CY[r.p[i]]) * 1.2);
+          cum += d;
+          h +=
+            "<tr><td>" +
+            r.p[i] +
+            "</td><td>" +
+            d +
+            " km</td><td>" +
+            cum +
+            " km</td><td>" +
+            hm(m0 + (cum / 55) * 60) +
+            "</td></tr>";
+        }
+        h += "</table>";
+        if (alt) {
+          var df = alt.km - r.km;
+          h +=
+            '<div class="meta" style="margin-bottom:12px">Alternate route (dashed): ' +
+            alt.km +
+            " km via " +
+            alt.p.join(" \u2192 ") +
+            ", " +
+            (df >= 0 ? df + " km longer" : -df + " km shorter") +
+            " than the best route.</div>";
+        }
+        return h;
+      }
+      function dist(a, b) {
+        return rr(a, b).km;
+      }
+      function P2(c) {
+        return [
+          Math.round(((c[1] - 2.4) / 12.6) * 760 + 20),
+          Math.round(((14.1 - c[0]) / 10.1) * 620 + 15),
+        ];
+      }
+      function drawMap(keep) {
+        if (!keep) MV.lab = 800 / MV.w >= 1.6;
+        var t = TR[+$("mt").value],
+          b = BYS[+$("mb").value],
+          o = TL[t.n],
+          d = b.s,
+          u = glink(o, b),
+          r = rr(o, d),
+          same = r.p.length < 2,
+          alt = !same && MV.ly.alt ? altRoute(r) : null,
+          on = {};
+        r.p.forEach(function (n) {
+          on[n] = 1;
+        });
+        var pa = function (a) {
+            return a
+              .map(function (c, i) {
+                var p = P2(c);
+                return (i ? "L" : "M") + p[0] + " " + p[1];
+              })
+              .join(" ");
+          },
+          tx =
+            "paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round";
+        var s =
+          '<svg class="map" viewBox="' +
+          MV.x +
+          " " +
+          MV.y +
+          " " +
+          MV.w +
+          " " +
+          MV.h +
+          '" role="img" aria-label="Road map from ' +
+          o +
+          " to " +
+          d +
+          '">';
+        s +=
+          '<path d="' +
+          pa(OL) +
+          ' Z" style="fill:var(--bg);stroke:var(--mute);stroke-width:2;stroke-linejoin:round"/>';
+        [
+          ["NIGER", 300, 38, "middle"],
+          ["CHAD", 792, 120, "end"],
+          ["CAMEROON", 792, 400, "end"],
+          ["GULF OF GUINEA", 330, 652, "middle"],
+        ].forEach(function (l) {
+          s +=
+            '<text x="' +
+            l[1] +
+            '" y="' +
+            l[2] +
+            '" text-anchor="' +
+            l[3] +
+            '" style="fill:var(--mute);opacity:.6;letter-spacing:2px" font-size="14">' +
+            l[0] +
+            "</text>";
+        });
+        if (MV.ly.rivers)
+          s +=
+            '<path d="' +
+            pa(NR) +
+            '" style="fill:none;stroke:var(--blue);stroke-width:3;opacity:.55;stroke-linecap:round;stroke-linejoin:round"/><path d="' +
+            pa(BN) +
+            '" style="fill:none;stroke:var(--blue);stroke-width:3;opacity:.55;stroke-linecap:round;stroke-linejoin:round"/>';
+        if (MV.ly.roads)
+          s +=
+            '<path d="' +
+            RD.map(function (e) {
+              return pa([CY[e[0]], CY[e[1]]]);
+            }).join(" ") +
+            '" style="fill:none;stroke:var(--mute);stroke-width:2.5;opacity:.65;stroke-linecap:round"/>';
+        if (alt) {
+          s +=
+            '<path d="' +
+            pa(
+              alt.p.map(function (n) {
+                return CY[n];
+              }),
+            ) +
+            '" style="fill:none;stroke:var(--blue);stroke-width:4;stroke-dasharray:9 8;stroke-linecap:round;stroke-linejoin:round"/>';
+        }
+        if (!same) {
+          var rp = pa(
+            r.p.map(function (n) {
+              return CY[n];
+            }),
+          );
+          s +=
+            '<path d="' +
+            rp +
+            '" style="fill:none;stroke:var(--bg);stroke-width:10;stroke-linecap:round;stroke-linejoin:round"/><path d="' +
+            rp +
+            '" style="fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-linejoin:round"/>';
+          if (!matchMedia("(prefers-reduced-motion:reduce)").matches)
+            s +=
+              '<circle r="7" style="fill:var(--ink);stroke:var(--accent);stroke-width:3"><animateMotion dur="9s" repeatCount="indefinite" path="' +
+              rp +
+              '"/></circle>';
+        }
+        Object.keys(CY).forEach(function (k) {
+          var p = P2(CY[k]),
+            big = MJ.indexOf(k) > -1;
+          s +=
+            '<circle cx="' +
+            p[0] +
+            '" cy="' +
+            p[1] +
+            '" r="' +
+            (big ? 6 : 4) +
+            '" style="fill:' +
+            (on[k] ? "var(--accent)" : "var(--mute)") +
+            '"><title>' +
+            k +
+            " \u00b7 about " +
+            (sp(SN[o], k) || { km: "?" }).km +
+            " km from " +
+            o +
+            "</title></circle>";
+          if (on[k] || (MV.ly.labels && (big || MV.lab)))
+            s +=
+              '<text x="' +
+              (p[0] + 10) +
+              '" y="' +
+              (p[1] + 5) +
+              '" font-size="16" style="fill:' +
+              (on[k] ? "var(--ink)" : "var(--mute)") +
+              ";" +
+              tx +
+              '">' +
+              k +
+              "</text>";
+        });
+        var a = P2(CY[SN[o]]),
+          z = P2(CY[SN[d]]);
+        s +=
+          '<circle cx="' +
+          z[0] +
+          '" cy="' +
+          z[1] +
+          '" r="11" style="fill:var(--blue);stroke:var(--ink);stroke-width:2"/><circle cx="' +
+          a[0] +
+          '" cy="' +
+          a[1] +
+          '" r="11" style="fill:var(--ok);stroke:var(--ink);stroke-width:2"/>';
+        s +=
+          '<text x="' +
+          (z[0] + 16) +
+          '" y="' +
+          (z[1] - 12) +
+          '" font-size="15" font-weight="700" style="fill:var(--blue);' +
+          tx +
+          '">' +
+          esc(b.n) +
+          '</text><text x="' +
+          (a[0] + 16) +
+          '" y="' +
+          (a[1] + 26) +
+          '" font-size="15" font-weight="700" style="fill:var(--ok);' +
+          tx +
+          '">' +
+          esc(t.n) +
+          "</text>";
+        if (MV.ly.people) {
+          var cnt = {};
+          PF.forEach(function (q) {
+            (cnt[q.s] = cnt[q.s] || { Farmer: 0, Buyer: 0, Transporter: 0 })[
+              q.r
+            ]++;
+          });
+          Object.keys(SN).forEach(function (st) {
+            var c = cnt[st],
+              q = P2(CY[SN[st]]);
+            if (!c) return;
+            s +=
+              '<text x="' +
+              q[0] +
+              '" y="' +
+              (q[1] + 48) +
+              '" text-anchor="middle" font-size="13" style="fill:var(--ink);' +
+              tx +
+              '">' +
+              "\u{1F33E}" +
+              c.Farmer +
+              " \u{1F6D2}" +
+              c.Buyer +
+              " \u{1F69A}" +
+              c.Transporter +
+              "</text>";
+          });
+        }
+        s += "</svg>";
+        $("mapsvg").innerHTML = s;
+        setVB();
+        var hrs = r.km / 55,
+          hh = Math.floor(hrs),
+          mm = Math.round((hrs - hh) * 60);
+        $("mi").innerHTML =
+          "<b>" +
+          t.n +
+          "</b> in " +
+          o +
+          " \u2192 <b>" +
+          esc(b.n) +
+          "</b> in " +
+          d +
+          '<div class="meta" style="margin:6px 0 4px">' +
+          (same
+            ? "Same state, short local trip."
+            : "About " +
+              r.km +
+              " km by road, roughly " +
+              hh +
+              " h " +
+              mm +
+              " min at an average 55 km/h (estimate).") +
+          "</div>" +
+          (same ? "" : legsHtml(r, alt)) +
+          '<a class="btn alt" href="' +
+          u +
+          '" target="_blank" rel="noopener">Open in Google Maps</a><input class="url" readonly value="' +
+          u +
+          '" aria-label="Google Maps link" onfocus="this.select()">';
+        $("mn").innerHTML =
+          "<h3>Transporters for " +
+          esc(b.n) +
+          "</h3>" +
+          TR.map(function (x) {
+            return { x: x, k: dist(TL[x.n], d), l: glink(TL[x.n], b) };
+          })
+            .sort(function (p, q) {
+              return p.k - q.k;
+            })
+            .map(function (e, i) {
+              return (
+                '<div class="tr"><div class="rank">' +
+                (i + 1) +
+                "</div><div><b>" +
+                e.x.n +
+                '</b><div class="meta">' +
+                e.x.v +
+                " \u00b7 in " +
+                TL[e.x.n] +
+                " \u00b7 " +
+                (e.k ? "about " + e.k + " km by road" : "same state") +
+                " \u00b7 damage " +
+                e.x.d.toFixed(1) +
+                '%</div></div><a class="btn ghost" href="' +
+                e.l +
+                '" target="_blank" rel="noopener">Directions</a></div>'
+              );
+            })
+            .join("");
+      }
+      var NG = [],
+        nl = null;
+      function r5(n) {
+        return Math.round(n / 500) * 500;
+      }
+      function openOffer(id) {
+        nl = L.filter(function (x) {
+          return x.id == id;
+        })[0];
+        $("ntitle").textContent = "Offer for " + nl.c + " from " + nl.f;
+        $("nmeta").textContent =
+          nl.s +
+          " · asking " +
+          f(nl.p) +
+          " per " +
+          units[nl.c] +
+          " · " +
+          nl.q +
+          " available";
+        $("nprice").value = r5(nl.p * 0.9);
+        $("nqty").value = Math.min(10, nl.q);
+        $("nqty").max = nl.q;
+        offerHint();
+        $("nd").showModal();
+      }
+      function offerHint() {
+        var o = +$("nprice").value || 0,
+          d = Math.round(((nl.p - o) / nl.p) * 100),
+          t =
+            "Market average is " + f(avg(nl.c)) + " per " + units[nl.c] + ". ";
+        t +=
+          o >= nl.p * 0.97
+            ? "This is close to the asking price, so it is very likely to be accepted."
+            : o >= nl.p * 0.88
+              ? "This is " +
+                d +
+                "% below asking. Expect a counter-offer near the middle."
+              : o >= nl.p * 0.75
+                ? "This is " +
+                  d +
+                  "% below asking. The farmer will probably counter."
+                : "This is " + d + "% below asking and likely to be declined.";
+        $("nhint").textContent = t;
+        $("nhint").className = "res" + (o < nl.p * 0.75 ? " bad" : "");
+      }
+      function openOrder(x, q) {
+        cur = x;
+        $("dt").textContent =
+          x.c + " from " + x.f + (x.neg ? " (negotiated price)" : "");
+        $("dm").textContent = x.s + " · " + f(x.p) + " per " + units[x.c];
+        $("dq").max = x.q;
+        $("dq").value = Math.min(q, x.q);
+        $("dr").innerHTML = TR.map(function (t, i) {
+          return (
+            '<option value="' +
+            i +
+            '">' +
+            t.n +
+            " · " +
+            t.v +
+            " · " +
+            f(t.fee) +
+            "/unit · damage " +
+            t.d.toFixed(1) +
+            "%</option>"
+          );
+        }).join("");
+        sum();
+        $("dlg").showModal();
+      }
+      function reply(th) {
+        if (th.st !== "open") return;
+        var l = th.lp,
+          o = th.rounds[th.rounds.length - 1].p,
+          fl = r5(l * 0.88),
+          r;
+        if (o >= l * 0.97 || (o >= fl && th.rounds.length >= 4)) {
+          th.st = "accepted";
+          th.ap = o;
+          r = {
+            by: "Farmer",
+            p: o,
+            t: "Deal. I accept " + f(o) + " per unit.",
+          };
+        } else if (o < l * 0.75 || th.final) {
+          th.st = "declined";
+          r = {
+            by: "Farmer",
+            p: null,
+            t: th.final
+              ? "I can’t go below " + f(fl) + ". Thank you for asking."
+              : "That is too far below my price, so I can’t accept.",
+          };
+        } else {
+          var m = th.rounds.length >= 4 ? fl : Math.max(fl, r5((o + l) / 2));
+          th.final = th.rounds.length >= 4;
+          r = {
+            by: "Farmer",
+            p: m,
+            t: th.final
+              ? "My final price is " + f(m) + " per unit."
+              : "How about " + f(m) + " per unit?",
+          };
+        }
+        th.rounds.push(r);
+        th.turn = th.st === "open" ? "Buyer" : "";
+        addFeed(
+          "Farmer",
+          th.fm +
+            (th.st === "accepted"
+              ? " accepted " + f(r.p)
+              : th.st === "declined"
+                ? " declined an offer"
+                : " countered with " + f(r.p)) +
+            " on " +
+            th.c,
+        );
+        renderDeals();
+      }
+      function renderDeals() {
+        renderInbox();
+        var MY = NG.filter(function (t) {
+            return t.by === "You";
+          }),
+          op = MY.filter(function (t) {
+            return t.st === "open";
+          }).length;
+        $("dn").textContent = op ? " (" + op + ")" : "";
+        $("nlist").innerHTML = MY.length
+          ? MY.map(function (t) {
+              var lf = t.rounds
+                  .filter(function (r) {
+                    return r.by === "Farmer";
+                  })
+                  .pop(),
+                lb = t.rounds
+                  .filter(function (r) {
+                    return r.by === "Buyer";
+                  })
+                  .pop(),
+                s =
+                  t.st === "accepted"
+                    ? "Accepted"
+                    : t.st === "declined"
+                      ? "Declined"
+                      : t.st === "closed"
+                        ? "Closed"
+                        : t.turn === "Buyer"
+                          ? "Your move"
+                          : "Waiting for farmer",
+                h =
+                  '<div class="ord"><b>' +
+                  t.q +
+                  " × " +
+                  t.c +
+                  "</b> from " +
+                  esc(t.fm) +
+                  " · asking " +
+                  f(t.lp) +
+                  ' <span class="tag">' +
+                  s +
+                  "</span>" +
+                  t.rounds
+                    .map(function (r) {
+                      return (
+                        '<div class="bub' +
+                        (r.by === "Buyer" ? " me" : "") +
+                        '"><b>' +
+                        (r.by === "Buyer" ? "You" : esc(t.fm)) +
+                        "</b>" +
+                        (r.p ? " · " + f(r.p) : "") +
+                        "<br>" +
+                        esc(r.t) +
+                        "</div>"
+                      );
+                    })
+                    .join("");
+              if (t.st === "open" && t.turn === "Buyer")
+                h +=
+                  '<div class="chk"><label>Counter-offer per unit (₦)<input type="number" min="100" id="nc' +
+                  t.id +
+                  '" value="' +
+                  r5((lb.p + lf.p) / 2) +
+                  '" style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px"></label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" data-na="counter" data-ni="' +
+                  t.id +
+                  '">Send counter</button><button class="btn alt" data-na="accept" data-ni="' +
+                  t.id +
+                  '">Accept ' +
+                  f(lf.p) +
+                  '</button><button class="btn ghost" data-na="walk" data-ni="' +
+                  t.id +
+                  '">Walk away</button></div></div>';
+              else if (t.st === "accepted")
+                h +=
+                  '<div class="res"><b>Deal agreed at ' +
+                  f(t.ap) +
+                  " per unit.</b> You save " +
+                  f((t.lp - t.ap) * t.q) +
+                  ' against the asking price.<br><button class="btn alt" style="margin-top:8px" data-na="order" data-ni="' +
+                  t.id +
+                  '">Order at this price</button></div>';
+              else if (t.st !== "open")
+                h += '<div class="res bad">No deal on this one.</div>';
+              return h + "</div>";
+            }).join("")
+          : '<div class="empty">No offers yet. Open the marketplace and tap Make offer on a listing.</div>';
+      }
+      $("nprice").oninput = offerHint;
+      $("ncancel").onclick = function () {
+        $("nd").close();
+      };
+      $("nsend").onclick = function () {
+        var o = +$("nprice").value,
+          q = Math.max(1, Math.min(nl.q, +$("nqty").value || 1));
+        if (o < 100) {
+          $("nhint").textContent = "Enter an offer of at least ₦100.";
+          return;
+        }
+        var th = {
+          id: nid++,
+          l: nl,
+          c: nl.c,
+          fm: nl.f,
+          q: q,
+          lp: nl.p,
+          rounds: [
+            {
+              by: "Buyer",
+              p: o,
+              t:
+                "I would like " +
+                q +
+                " × " +
+                nl.c +
+                " at " +
+                f(o) +
+                " per unit.",
+            },
+          ],
+          st: "open",
+          turn: "Farmer",
+          ap: 0,
+          final: false,
+          by: "You",
+        };
+        NG.unshift(th);
+        $("nd").close();
+        addFeed(
+          "Buyer",
+          "You offered " +
+            f(o) +
+            " per unit to " +
+            nl.f +
+            " for " +
+            q +
+            " × " +
+            nl.c,
+        );
+        renderDeals();
+        show("deals");
+        if (AUTO)
+          setTimeout(function () {
+            reply(th);
+          }, 2200);
+      };
+      document.addEventListener("click", function (e) {
+        var d = e.target.dataset || {};
+        if (d.of) {
+          openOffer(d.of);
+          return;
+        }
+        if (!d.na) return;
+        var t = NG.filter(function (x) {
+          return x.id == d.ni;
+        })[0];
+        if (!t) return;
+        var fp = t.rounds
+          .filter(function (r) {
+            return r.by === "Farmer";
+          })
+          .pop().p;
+        if (d.na === "accept") {
+          t.st = "accepted";
+          t.ap = fp;
+          t.turn = "";
+          addFeed("Buyer", "You accepted " + f(fp) + " from " + t.fm);
+          renderDeals();
+        } else if (d.na === "walk") {
+          t.st = "closed";
+          t.turn = "";
+          addFeed("Buyer", "You ended talks with " + t.fm);
+          renderDeals();
+        } else if (d.na === "order") {
+          openOrder(Object.assign({}, t.l, { p: t.ap, neg: 1 }), t.q);
+        } else {
+          var p = +$("nc" + t.id).value;
+          if (p < 100) return;
+          if (p >= fp) {
+            t.st = "accepted";
+            t.ap = fp;
+            t.turn = "";
+            addFeed("Buyer", "You accepted " + f(fp) + " from " + t.fm);
+            renderDeals();
+          } else {
+            t.rounds.push({
+              by: "Buyer",
+              p: p,
+              t: "Can you do " + f(p) + " per unit?",
+            });
+            t.turn = "Farmer";
+            addFeed("Buyer", "You countered with " + f(p) + " to " + t.fm);
+            renderDeals();
+            if (AUTO)
+              setTimeout(function () {
+                reply(t);
+              }, 2200);
+          }
+        }
+      });
+      var STK = 3,
+        SK = {
+          "Amina Bello": { n: 2, rw: false },
+          "Funke Adebayo": { n: 1, rw: false },
+        };
+      function bump(fm) {
+        var s = SK[fm] || (SK[fm] = { n: 0, rw: false });
+        if (s.rw) return;
+        s.n++;
+        if (s.n >= STK) {
+          s.rw = true;
+          addFeed(
+            "Buyer",
+            "Streak unlocked: 20% off your next order from " + fm,
+          );
+        }
+        renderStreaks();
+      }
+      function stk(fm) {
+        var s = SK[fm] || { n: 0, rw: false };
+        if (s.rw)
+          return '<div class="stk on">20% off ready on your next order from this farmer</div>';
+        var d = "";
+        for (var i = 0; i < STK; i++)
+          d += '<i class="' + (i < s.n ? "on" : "") + '"></i>';
+        return (
+          '<div class="stk"><span class="dots">' +
+          d +
+          "</span>" +
+          s.n +
+          " of " +
+          STK +
+          " orders. Reach " +
+          STK +
+          " for 20% off.</div>"
+        );
+      }
+      function renderStreaks() {
+        var rd = 0,
+          h = PF.filter(function (p) {
+            return p.r === "Farmer";
+          })
+            .map(function (p) {
+              var s = SK[p.n] || { n: 0, rw: false };
+              if (s.rw) rd++;
+              return (
+                '<div class="tr"><div class="rank">' +
+                (s.rw ? "★" : s.n) +
+                "</div><div><b>" +
+                esc(p.n) +
+                '</b><div class="meta">' +
+                p.s +
+                " · " +
+                p.c.join(", ") +
+                '</div></div><div style="text-align:right">' +
+                (s.rw
+                  ? '<span class="pill" style="background:var(--accent)">20% off ready</span>'
+                  : '<span class="meta">' +
+                    s.n +
+                    " of " +
+                    STK +
+                    " orders</span>") +
+                "</div></div>"
+              );
+            })
+            .join("");
+        $("rlist").innerHTML = h;
+        $("rn").textContent = rd ? " (" + rd + ")" : "";
+        renderList();
+      }
+      $("fs").onclick = function () {
+        var d = document,
+          el = d.documentElement,
+          na = function () {
+            $("fs").textContent = "Not available here";
+          };
+        try {
+          if (d.fullscreenElement) d.exitFullscreen();
+          else if (el.requestFullscreen) el.requestFullscreen().catch(na);
+          else na();
+        } catch (e) {
+          na();
+        }
+      };
+      document.addEventListener("fullscreenchange", function () {
+        $("fs").textContent = document.fullscreenElement
+          ? "Exit full screen"
+          : "Full screen";
+      });
+      var AUTO = true,
+        iF = "Amina Bello";
+      $("auto").onchange = function () {
+        AUTO = this.checked;
+        if (AUTO)
+          NG.forEach(function (t) {
+            if (t.by === "You" && t.st === "open" && t.turn === "Farmer")
+              setTimeout(function () {
+                reply(t);
+              }, 1500);
+          });
+      };
+      function seedOffer(by, fm, q, pct, txt) {
+        var x = L.filter(function (l) {
+          return l.f === fm;
+        })[0];
+        if (!x) return;
+        NG.push({
+          id: nid++,
+          l: x,
+          c: x.c,
+          fm: fm,
+          q: q,
+          lp: x.p,
+          rounds: [{ by: "Buyer", p: r5(x.p * pct), t: txt }],
+          st: "open",
+          turn: "Farmer",
+          ap: 0,
+          final: false,
+          by: by,
+        });
+      }
+      seedOffer(
+        "Kano Grain Traders",
+        "Amina Bello",
+        40,
+        0.8,
+        "We can take 40 bags and collect this week. Can you do this price?",
+      );
+      seedOffer(
+        "Mama Nkechi Foods",
+        "Funke Adebayo",
+        20,
+        0.85,
+        "We buy every week. Would you do this price for 20 baskets?",
+      );
+      seedOffer(
+        "Lekki Fresh Market",
+        "Chinedu Okafor",
+        60,
+        0.9,
+        "Looking for 60 bundles of yam for the weekend market.",
+      );
+      seedOffer(
+        "Ibadan Hotel Group",
+        "Sani Yusuf",
+        15,
+        0.95,
+        "Our kitchens need 15 baskets by Friday.",
+      );
+      function bReply(t) {
+        if (t.st !== "open" || t.turn !== "Buyer") return;
+        var fp = t.rounds[t.rounds.length - 1].p,
+          bo = t.rounds
+            .filter(function (r) {
+              return r.by === "Buyer";
+            })
+            .pop().p,
+          mx = r5(t.lp * 0.93),
+          r;
+        if (fp <= mx) {
+          r = { by: "Buyer", p: fp, t: "Deal. " + f(fp) + " works for me." };
+          t.st = "accepted";
+          t.ap = fp;
+        } else if (t.rounds.length >= 5) {
+          r = {
+            by: "Buyer",
+            p: null,
+            t: "That is above my budget. Thank you.",
+          };
+          t.st = "closed";
+        } else {
+          var c = Math.max(bo, Math.min(r5((bo + fp) / 2), mx));
+          r = { by: "Buyer", p: c, t: "Can you do " + f(c) + " per unit?" };
+        }
+        t.rounds.push(r);
+        t.turn = t.st === "open" ? "Farmer" : "";
+        addFeed(
+          "Buyer",
+          t.by +
+            (t.st === "accepted"
+              ? " accepted " + f(r.p)
+              : t.st === "closed"
+                ? " walked away"
+                : " countered with " + f(r.p)) +
+            " on " +
+            t.c +
+            " from " +
+            t.fm,
+        );
+        renderDeals();
+      }
+      function renderInbox() {
+        var fs = PF.filter(function (p) {
+            return p.r === "Farmer";
+          }),
+          sel = $("isel");
+        if (sel.options.length !== fs.length)
+          sel.innerHTML = fs
+            .map(function (p) {
+              return "<option>" + esc(p.n) + "</option>";
+            })
+            .join("");
+        sel.value = iF;
+        var all = NG.filter(function (t) {
+            return t.fm === iF;
+          }),
+          pend = NG.filter(function (t) {
+            return t.st === "open" && t.turn === "Farmer";
+          }).length;
+        $("ib").textContent = pend ? " (" + pend + ")" : "";
+        $("ilist").innerHTML = all.length
+          ? all
+              .map(function (t) {
+                var nm = t.by === "You" ? "You (as buyer)" : t.by,
+                  lb = t.rounds
+                    .filter(function (r) {
+                      return r.by === "Buyer";
+                    })
+                    .pop(),
+                  need = t.st === "open" && t.turn === "Farmer",
+                  d = Math.round(((t.lp - lb.p) / t.lp) * 100),
+                  s =
+                    t.st === "accepted"
+                      ? "Accepted"
+                      : t.st === "declined"
+                        ? "Declined"
+                        : t.st === "closed"
+                          ? "Closed"
+                          : need
+                            ? "Needs your reply"
+                            : "Waiting for buyer",
+                  h =
+                    '<div class="ord"><b>' +
+                    t.q +
+                    " × " +
+                    t.c +
+                    "</b> · " +
+                    esc(nm) +
+                    " · your price " +
+                    f(t.lp) +
+                    ' <span class="tag">' +
+                    s +
+                    "</span>" +
+                    t.rounds
+                      .map(function (r) {
+                        return (
+                          '<div class="bub' +
+                          (r.by === "Farmer" ? " me" : "") +
+                          '"><b>' +
+                          (r.by === "Farmer" ? "You" : esc(nm)) +
+                          "</b>" +
+                          (r.p ? " · " + f(r.p) : "") +
+                          "<br>" +
+                          esc(r.t) +
+                          "</div>"
+                        );
+                      })
+                      .join("");
+                if (need)
+                  h +=
+                    '<div class="chk"><div class="meta">Their offer is ' +
+                    (d > 0 ? d + "% below" : "at or above") +
+                    " your asking price. Market average is " +
+                    f(avg(t.c)) +
+                    " per " +
+                    units[t.c] +
+                    '.</div><label>Your counter-offer per unit (₦)<input id="ic' +
+                    t.id +
+                    '" type="number" min="100" value="' +
+                    r5((lb.p + t.lp) / 2) +
+                    '" style="width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px"></label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn alt" data-ia="accept" data-ii="' +
+                    t.id +
+                    '">Accept ' +
+                    f(lb.p) +
+                    '</button><button class="btn" data-ia="counter" data-ii="' +
+                    t.id +
+                    '">Send counter</button><button class="btn ghost" data-ia="decline" data-ii="' +
+                    t.id +
+                    '">Decline</button></div></div>';
+                else if (t.st === "accepted")
+                  h +=
+                    '<div class="res"><b>Deal at ' +
+                    f(t.ap) +
+                    " per unit.</b> Sales value " +
+                    f(t.ap * t.q) +
+                    " before fees.</div>";
+                return h + "</div>";
+              })
+              .join("")
+          : '<div class="empty">No offers for this farmer yet. Make an offer from the Marketplace with automatic replies turned off.</div>';
+      }
+      $("isel").onchange = function () {
+        iF = this.value;
+        renderInbox();
+      };
+      document.addEventListener("click", function (e) {
+        var d = e.target.dataset || {};
+        if (!d.ia) return;
+        var t = NG.filter(function (x) {
+          return x.id == d.ii;
+        })[0];
+        if (!t) return;
+        var lb = t.rounds
+            .filter(function (r) {
+              return r.by === "Buyer";
+            })
+            .pop().p,
+          acc = function () {
+            t.rounds.push({
+              by: "Farmer",
+              p: lb,
+              t: "Deal. I accept " + f(lb) + " per unit.",
+            });
+            t.st = "accepted";
+            t.ap = lb;
+            t.turn = "";
+            addFeed("Farmer", t.fm + " accepted " + f(lb) + " on " + t.c);
+          };
+        if (d.ia === "accept") acc();
+        else if (d.ia === "decline") {
+          t.rounds.push({
+            by: "Farmer",
+            p: null,
+            t: "Sorry, I can’t accept that price.",
+          });
+          t.st = "declined";
+          t.turn = "";
+          addFeed("Farmer", t.fm + " declined an offer on " + t.c);
+        } else {
+          var p = +$("ic" + t.id).value;
+          if (p < 100) return;
+          if (p <= lb) acc();
+          else {
+            t.rounds.push({
+              by: "Farmer",
+              p: p,
+              t: "How about " + f(p) + " per unit?",
+            });
+            t.turn = "Buyer";
+            addFeed("Farmer", t.fm + " countered with " + f(p) + " on " + t.c);
+            if (t.by !== "You")
+              setTimeout(function () {
+                bReply(t);
+              }, 2500);
+          }
+        }
+        renderDeals();
+      });
+      $("mbtn").onclick = function () {
+        var o = $("nav").classList.toggle("open");
+        this.setAttribute("aria-expanded", o);
+      };
+      $("nav").addEventListener("click", function (e) {
+        if (e.target.dataset.v) {
+          $("nav").classList.remove("open");
+          $("mbtn").setAttribute("aria-expanded", "false");
+        }
+      });
+      function setSidebar(open) {
+        document.body.classList.toggle("sb-closed", !open);
+        $("sbhide").setAttribute("aria-expanded", open);
+        $("sbshow").setAttribute("aria-expanded", open);
+        try {
+          localStorage.setItem("fc_sidebar", open ? "open" : "closed");
+        } catch (e) {}
+        // return focus to the control that is now visible
+        (open ? $("sbhide") : $("sbshow")).focus({ preventScroll: true });
+      }
+      $("sbhide").onclick = function () {
+        setSidebar(false);
+      };
+      $("sbshow").onclick = function () {
+        setSidebar(true);
+      };
+      document.addEventListener("keydown", function (e) {
+        if (
+          e.key === "Escape" &&
+          !document.body.classList.contains("sb-closed") &&
+          window.innerWidth > 900 &&
+          /^(BODY|BUTTON)$/.test(document.activeElement.tagName) &&
+          $("sidebar").contains(document.activeElement)
+        ) {
+          setSidebar(false);
+        }
+      });
+      (function () {
+        var c = false;
+        try {
+          c = localStorage.getItem("fc_sidebar") === "closed";
+        } catch (e) {}
+        if (c) {
+          document.body.classList.add("sb-closed");
+          $("sbhide").setAttribute("aria-expanded", "false");
+          $("sbshow").setAttribute("aria-expanded", "false");
+        }
+      })();
+      var PD = { Crates: 2.5, Bags: 3.5, Bundles: 4.5, Baskets: 5, Sacks: 6 },
+        CMP = {},
+        GR = {
+          1: ["A", "Bags"],
+          2: ["A", "Bundles"],
+          3: ["A", "Crates"],
+          4: ["A", "Bags"],
+          5: ["B", "Sacks"],
+          6: ["B", "Baskets"],
+        };
+      L.forEach(function (x) {
+        var g = GR[x.id];
+        if (g) {
+          x.g = g[0];
+          x.pk = g[1];
+        }
+      });
+      function farmerOf(n) {
+        return PF.filter(function (p) {
+          return p.r === "Farmer" && p.n === n;
+        })[0];
+      }
+      function rate(x) {
+        var p = farmerOf(x.f),
+          m = p && /([\d.]+) rating · (\d+) sales/.exec(p.k);
+        return m ? { r: +m[1], n: +m[2] } : null;
+      }
+      function badges(x) {
+        var t = rate(x),
+          h = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:2px 0">';
+        if (x.g) h += '<span class="tag">Grade ' + x.g + "</span>";
+        if (x.pk) h += '<span class="tag">' + x.pk + "</span>";
+        return (
+          h +
+          '</div><div class="meta">' +
+          (t
+            ? "★ " + t.r + " · " + t.n + " sales"
+            : "New seller, no sales yet") +
+          (x.pk ? " · typical transit damage about " + PD[x.pk] + "%" : "") +
+          "</div>"
+        );
+      }
+      function sortL(r) {
+        var k = $("so").value;
+        if (!k) return r;
+        var key = {
+          pl: function (x) {
+            return x.p;
+          },
+          ph: function (x) {
+            return -x.p;
+          },
+          rt: function (x) {
+            return -(rate(x) || { r: 0 }).r;
+          },
+          dm: function (x) {
+            return x.pk ? PD[x.pk] : 99;
+          },
+          fp: function (x) {
+            return (x.p - avg(x.c)) / avg(x.c);
+          },
+        }[k];
+        return r.slice().sort(function (a, b) {
+          return key(a) - key(b);
+        });
+      }
+      function renderCbar() {
+        var n = Object.keys(CMP).length;
+        $("cbar").hidden = !n;
+        $("cct").textContent = n + " selected";
+      }
+      document.addEventListener("change", function (e) {
+        var id = e.target.dataset && e.target.dataset.cmp;
+        if (!id) return;
+        if (e.target.checked) {
+          if (Object.keys(CMP).length >= 3) {
+            e.target.checked = false;
+            $("cnote").textContent = "You can compare up to 3 listings.";
+            return;
+          }
+          CMP[id] = 1;
+        } else delete CMP[id];
+        $("cnote").textContent = "";
+        renderCbar();
+      });
+      $("cgo").onclick = function () {
+        if (Object.keys(CMP).length < 2) {
+          $("cnote").textContent = "Pick at least 2 listings.";
+          return;
+        }
+        openCmp();
+      };
+      $("cclr").onclick = function () {
+        CMP = {};
+        renderCbar();
+        renderList();
+      };
+      document.addEventListener("click", function (e) {
+        if (e.target.dataset && e.target.dataset.x2) $("cd").close();
+      });
+      function openCmp() {
+        var a = L.filter(function (x) {
+            return CMP[x.id];
+          }),
+          vm = function (x) {
+            return Math.round(((x.p - avg(x.c)) / avg(x.c)) * 100);
+          },
+          rt = function (x) {
+            return (rate(x) || { r: 0 }).r;
+          },
+          dm = function (x) {
+            return x.pk ? PD[x.pk] : 99;
+          };
+        var R = [
+          [
+            "Crop",
+            function (x) {
+              return x.c;
+            },
+          ],
+          [
+            "Asking price",
+            function (x) {
+              return f(x.p) + " per " + units[x.c];
+            },
+            function (x) {
+              return x.p;
+            },
+            -1,
+          ],
+          [
+            "Versus market",
+            function (x) {
+              var d = vm(x);
+              return (d > 0 ? "+" : "") + d + "%";
+            },
+            vm,
+            -1,
+          ],
+          [
+            "Grade",
+            function (x) {
+              return x.g || "-";
+            },
+          ],
+          [
+            "Packaging",
+            function (x) {
+              return x.pk || "-";
+            },
+          ],
+          [
+            "Farmer rating",
+            function (x) {
+              var t = rate(x);
+              return t ? "★ " + t.r + " (" + t.n + " sales)" : "New seller";
+            },
+            rt,
+            1,
+          ],
+          [
+            "Typical damage",
+            function (x) {
+              return x.pk ? "about " + PD[x.pk] + "%" : "-";
+            },
+            dm,
+            -1,
+          ],
+          [
+            "Farmer location",
+            function (x) {
+              return x.s;
+            },
+          ],
+          [
+            "Distance to Lagos",
+            function (x) {
+              return "about " + dist(x.s, "Lagos") + " km";
+            },
+          ],
+          [
+            "Quantity",
+            function (x) {
+              return x.q + " available";
+            },
+          ],
+        ];
+        var h =
+          '<h3>Compare listings</h3><div class="scroll" style="margin-top:12px"><table style="min-width:520px"><tr><th></th>' +
+          a
+            .map(function (x) {
+              return "<th>" + esc(x.f) + "</th>";
+            })
+            .join("") +
+          "</tr>";
+        R.forEach(function (r) {
+          var best = null;
+          if (r[2]) {
+            var v = a.map(r[2]);
+            best = r[3] > 0 ? Math.max.apply(0, v) : Math.min.apply(0, v);
+            if (
+              v.every(function (y) {
+                return y === v[0];
+              })
+            )
+              best = null;
+          }
+          h +=
+            "<tr><td><b>" +
+            r[0] +
+            "</b></td>" +
+            a
+              .map(function (x) {
+                var ok = best !== null && r[2](x) === best;
+                return (
+                  '<td style="' +
+                  (ok ? "color:var(--ok);font-weight:700" : "") +
+                  '">' +
+                  r[1](x) +
+                  (ok ? " ✓" : "") +
+                  "</td>"
+                );
+              })
+              .join("") +
+            "</tr>";
+        });
+        $("cd").innerHTML =
+          h +
+          '</table></div><div class="meta" style="margin-top:10px">✓ marks the best value in each row. Damage figures are sample estimates by packaging type.</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn ghost" data-x2="1">Close</button></div>';
+        $("cd").showModal();
+      }
+      opts($("st"), states, "All states");
+      opts($("sc"), crops);
+      opts($("ss"), states);
+      renderCrops();
+      renderList();
+      renderOrders();
+      renderTr();
+      heat();
+      spread();
+      prev();
+      renderPeople();
+      renderSaved();
+      renderChips();
+      for (var i = 0; i < 4; i++) sim();
+      startFeed();
+      initMap();
+      renderDeals();
+      renderStreaks();
+      var TH = { mode: "dark", accent: "gold" };
+      try {
+        var tsv = JSON.parse(localStorage.getItem("fc_theme") || "{}");
+        if (/^(dark|light|system)$/.test(tsv.mode)) TH.mode = tsv.mode;
+        if (/^(gold|green|coral|sky)$/.test(tsv.accent)) TH.accent = tsv.accent;
+      } catch (e) {}
+      var tmq = window.matchMedia("(prefers-color-scheme: light)");
+      function applyTheme() {
+        var r = document.documentElement,
+          m = TH.mode === "system" ? (tmq.matches ? "light" : "dark") : TH.mode;
+        r.setAttribute("data-theme", m);
+        r.setAttribute("data-accent", TH.accent);
+        var mt = document.querySelector('meta[name="theme-color"]');
+        if (mt)
+          mt.setAttribute(
+            "content",
+            getComputedStyle(r).getPropertyValue("--bg").trim(),
+          );
+        [].forEach.call(
+          document.querySelectorAll("#settings input"),
+          function (i) {
+            i.checked = TH[i.name === "theme" ? "mode" : "accent"] === i.value;
+          },
+        );
+      }
+      function saveTheme(msg) {
+        try {
+          localStorage.setItem("fc_theme", JSON.stringify(TH));
+        } catch (e) {}
+        $("stmsg").textContent = msg;
+      }
+      $("settings").addEventListener("change", function (e) {
+        if (e.target.name === "theme" || e.target.name === "accent") {
+          TH[e.target.name === "theme" ? "mode" : "accent"] = e.target.value;
+          applyTheme();
+          saveTheme("Theme updated.");
+        }
+      });
+      $("strst").onclick = function () {
+        TH = { mode: "dark", accent: "gold" };
+        applyTheme();
+        saveTheme("Theme reset to default.");
+      };
+      if (tmq.addEventListener)
+        tmq.addEventListener("change", function () {
+          if (TH.mode === "system") applyTheme();
+        });
+      applyTheme();
+      var h = location.hash.slice(1);
+      show(views.indexOf(h) > -1 ? h : "market");
+    </script>
+  </body>
+</html>
